@@ -11,6 +11,10 @@
     page-break-after: always;
   }
   
+  .is-exporting .hide-in-export {
+    display: none !important;
+  }
+  
   .is-exporting input:placeholder-shown,
   .is-exporting textarea:placeholder-shown {
     opacity: 0 !important;

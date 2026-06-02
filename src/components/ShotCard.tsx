@@ -35,16 +35,49 @@ export function ShotCard({ shot, index }: ShotCardProps) {
     zIndex: isDragging ? 10 : 1,
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processImageFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      saveHistory();
-      updateShot(shot.id, { image: e.target?.result as string });
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          saveHistory();
+          updateShot(shot.id, { image: dataUrl });
+        }
+      };
+      img.src = e.target?.result as string;
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -55,12 +88,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        saveHistory();
-        updateShot(shot.id, { image: e.target?.result as string });
-      };
-      reader.readAsDataURL(file);
+      processImageFile(file);
     }
   };
 
@@ -136,7 +164,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
           onChange={handleImageUpload} 
         />
         {shot.image ? (
-          <img src={shot.image} alt={`Shot ${index + 1}`} className="w-full h-full object-cover" />
+          <img src={shot.image} alt={`Shot ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight hide-in-export">
             Drag & Drop Image
