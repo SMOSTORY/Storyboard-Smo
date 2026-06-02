@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  .board-page {
+    page-break-after: always;
+  }
+  
+  .is-exporting input:placeholder-shown,
+  .is-exporting textarea:placeholder-shown {
+    opacity: 0 !important;
+  }
+
+  .light-export.board-page {
+    background-color: #ffffff !important;
+    border-color: #e5e5e5 !important;
+  }
+  .light-export .bg-\[\#1E1E1E\] {
+    background-color: #f8fafc !important;
+  }
+  .light-export .bg-\[\#0F0F0F\] {
+    background-color: #f1f5f9 !important;
+  }
+  .light-export .bg-\[\#333\] {
+    background-color: #e2e8f0 !important;
+  }
+  .light-export .bg-\[\#111\] {
+    background-color: #ffffff !important;
+  }
+  .light-export .bg-\[\#2A2A2A\] {
+    background-color: #cbd5e1 !important;
+  }
+  
+  .light-export .text-white,
+  .light-export [class*="text-white"] {
+    color: #0f172a !important;
+  }
+  .light-export .text-\[\#E0E0E0\] {
+    color: #1e293b !important;
+  }
+  .light-export .text-\[\#BBB\] {
+    color: #475569 !important;
+  }
+  .light-export .text-\[\#999\] {
+    color: #475569 !important;
+  }
+  .light-export .text-\[\#666\] {
+    color: #64748b !important;
+  }
+  .light-export .text-\[\#555\] {
+    color: #64748b !important;
+  }
+  .light-export .text-\[\#333\] {
+    color: #94a3b8 !important;
+  }
+  .light-export .text-blue-400 {
+    color: #2563eb !important;
+  }
+  
+  .light-export .border-\[\#333\],
+  .light-export .border-\[\#444\],
+  .light-export [class*="border-[#"] {
+    border-color: #e2e8f0 !important;
+  }
+  
+  .light-export [class*="decoration-[#444]"] {
+    text-decoration-color: #cbd5e1 !important;
+  }
+  
+  .light-export input, 
+  .light-export textarea, 
+  .light-export select {
+    color: #0f172a !important;
+  }
+  
+  .light-export input::placeholder, 
+  .light-export textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+}

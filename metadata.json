@@ -1,0 +1,6 @@
+{
+  "name": "Storyboard Creator",
+  "description": "An offline-first storyboard creator supporting PDF export, rich text editing, and local persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
