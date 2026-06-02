@@ -18,6 +18,7 @@ export interface StoryboardActions {
   setFooterCenter: (text: string) => void;
   
   addShot: (index: number) => void;
+  addPage: () => void;
   updateShot: (id: string, updates: Partial<Shot>) => void;
   deleteShot: (id: string) => void;
   reorderShots: (startIndex: number, endIndex: number) => void;
@@ -91,6 +92,14 @@ export const useStore = create<Store>()(
         set((state) => {
           const newShots = [...state.shots];
           newShots.splice(index, 0, createEmptyShot());
+          return { shots: newShots };
+        });
+      },
+
+      addPage: () => {
+        get().saveHistory();
+        set((state) => {
+          const newShots = [...state.shots, ...Array.from({ length: 8 }).map(createEmptyShot)];
           return { shots: newShots };
         });
       },

@@ -26,7 +26,8 @@ export function StoryboardGrid() {
     headerRight, setHeaderRight,
     footerLeft, setFooterLeft,
     footerCenter, setFooterCenter,
-    saveHistory
+    saveHistory,
+    addPage
   } = useStore();
 
   const sensors = useSensors(
@@ -129,10 +130,17 @@ export function StoryboardGrid() {
                 
                 {/* Empty placeholders for the rest of the page if incomplete */}
                 {Array.from({ length: 8 - pageShots.length }).map((_, i) => (
-                  <div key={`empty-${i}`} className="bg-[#1E1E1E] border border-[#333] opacity-40 rounded-sm p-2 flex flex-col">
-                     <div className="text-[10px] font-mono text-blue-400">SHOT --</div>
-                     <div className="flex-1 flex items-center justify-center text-[24px] text-[#333]">+</div>
-                  </div>
+                  <button 
+                    key={`empty-${i}`} 
+                    onClick={() => {
+                      const newIndex = (pageIndex * 8) + pageShots.length + i;
+                      useStore.getState().addShot(newIndex);
+                    }}
+                    className="bg-[#1E1E1E] border border-[#333] hover:border-[#555] opacity-40 hover:opacity-100 rounded-sm p-2 flex flex-col transition-all cursor-pointer text-left"
+                  >
+                     <div className="text-[10px] font-mono text-[#888]">SHOT --</div>
+                     <div className="flex-1 flex items-center justify-center text-[24px] text-[#555] hover:text-[#E0E0E0] transition-colors">+</div>
+                  </button>
                 ))}
               </div>
 
@@ -159,13 +167,20 @@ export function StoryboardGrid() {
                   />
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-mono font-bold text-blue-400 uppercase">PAGE {pageIndex + 1} / {pages.length}</span>
+                  <span className="text-[10px] font-mono font-bold text-[#888] uppercase">PAGE {pageIndex + 1} / {pages.length}</span>
                 </div>
               </div>
             </div>
           ))}
         </SortableContext>
       </DndContext>
+      
+      <button 
+        onClick={addPage}
+        className="mb-10 px-8 py-3 bg-[#222] hover:bg-[#333] border border-[#444] rounded-lg text-sm font-bold text-white transition-colors hide-in-export shadow-lg"
+      >
+        + Add Page
+      </button>
     </div>
   );
 }

@@ -80,32 +80,32 @@ export function ShotCard({ shot, index }: ShotCardProps) {
     >
       {/* Header overlay for dragging action */}
       <div 
-        className="absolute top-2 right-2 z-10 p-1 bg-black/60 text-white rounded cursor-grab active:cursor-grabbing shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors"
         {...attributes}
         {...listeners}
       >
-        <GripVertical size={14} />
+        <GripVertical size={13} />
       </div>
 
-      <div className="absolute top-9 right-2 z-10 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button 
-          onClick={() => addShot(index + 1)}
-          className="p-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded shadow-sm"
+          onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
+          className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
           title="Add shot after"
         >
-          <Plus size={14} />
+          <Plus size={13} />
         </button>
         <button 
-          onClick={() => deleteShot(shot.id)}
-          className="p-1 bg-red-600/80 hover:bg-red-600 text-white rounded shadow-sm"
+          onClick={(e) => { e.stopPropagation(); deleteShot(shot.id); }}
+          className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-red-400 rounded shadow-lg transition-colors pointer-events-auto"
           title="Delete shot"
         >
-          <Trash2 size={14} />
+          <Trash2 size={13} />
         </button>
       </div>
 
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-[10px] font-mono font-bold bg-[#333] text-blue-400 px-1.5 rounded text-center inline-block py-0.5 min-w-[60px]">
+        <span className="text-[10px] font-mono font-bold bg-[#222] text-[#888] px-1.5 rounded text-center inline-block py-0.5 min-w-[60px]">
           SHOT {String(index + 1).padStart(2, '0')}
         </span>
         <input
