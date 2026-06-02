@@ -40,6 +40,9 @@
   .light-export .bg-\[\#111\] {
     background-color: #ffffff !important;
   }
+  .light-export .bg-\[\#222\] {
+    background-color: #ffffff !important;
+  }
   .light-export .bg-\[\#2A2A2A\] {
     background-color: #cbd5e1 !important;
   }
@@ -54,7 +57,8 @@
   .light-export .text-\[\#BBB\] {
     color: #475569 !important;
   }
-  .light-export .text-\[\#999\] {
+  .light-export .text-\[\#999\],
+  .light-export .text-\[\#888\] {
     color: #475569 !important;
   }
   .light-export .text-\[\#666\] {
