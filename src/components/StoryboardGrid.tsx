@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useStore } from '../store';
 import { ShotCard } from './ShotCard';
+import { Trash2, AlertTriangle } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -27,8 +28,11 @@ export function StoryboardGrid() {
     footerLeft, setFooterLeft,
     footerCenter, setFooterCenter,
     saveHistory,
-    addPage
+    addPage,
+    deletePage
   } = useStore();
+
+  const [pageToDelete, setPageToDelete] = useState<number | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -78,9 +82,18 @@ export function StoryboardGrid() {
           {pages.map((pageShots, pageIndex) => (
             <div 
               key={`page-${pageIndex}`}
-              className="board-page bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] aspect-[1.414] shrink-0 flex flex-col p-6 relative overflow-hidden"
+              className="board-page group bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] aspect-[1.414] shrink-0 flex flex-col p-6 relative overflow-hidden"
               // DIN A4 width/height: 297mm x 210mm. Aspect is 1.414.
             >
+              {/* DELETE PAGE BUTTON */}
+              <button
+                onClick={() => setPageToDelete(pageIndex)}
+                className="absolute top-4 right-4 z-50 p-2 bg-[#181818] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 text-[#888] hover:text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all hide-in-export shadow-lg cursor-pointer pointer-events-auto"
+                title="Delete Page"
+              >
+                <Trash2 size={16} />
+              </button>
+
               {/* PAGE HEADER */}
               <div className="grid grid-cols-3 gap-4 border-b border-[#444] pb-4 mb-4 shrink-0">
                 <div>
@@ -181,6 +194,40 @@ export function StoryboardGrid() {
       >
         + Add Page
       </button>
+
+      {/* Delete Page Modal */}
+      {pageToDelete !== null && (
+        <div className="fixed inset-0 z-[200] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm hide-in-export">
+          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl p-6 w-full max-w-sm flex flex-col pointer-events-auto">
+            <div className="flex items-center gap-3 text-red-400 mb-4">
+              <div className="p-2 bg-red-500/10 rounded-full">
+                <AlertTriangle size={20} />
+              </div>
+              <h2 className="text-lg font-bold">Delete Page?</h2>
+            </div>
+            <p className="text-[#AAA] text-sm mb-6 leading-relaxed">
+              Are you sure you want to delete this page? All shots on this page will be permanently removed. This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setPageToDelete(null)}
+                className="px-4 py-2 hover:bg-[#222] text-[#AAA] hover:text-white rounded text-sm font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  deletePage(pageToDelete);
+                  setPageToDelete(null);
+                }}
+                className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 rounded text-sm font-bold transition-colors border border-red-500/30"
+              >
+                Delete Page
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

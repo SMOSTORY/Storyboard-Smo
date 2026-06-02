@@ -19,6 +19,7 @@ export interface StoryboardActions {
   
   addShot: (index: number) => void;
   addPage: () => void;
+  deletePage: (pageIndex: number) => void;
   updateShot: (id: string, updates: Partial<Shot>) => void;
   deleteShot: (id: string) => void;
   reorderShots: (startIndex: number, endIndex: number) => void;
@@ -100,6 +101,19 @@ export const useStore = create<Store>()(
         get().saveHistory();
         set((state) => {
           const newShots = [...state.shots, ...Array.from({ length: 8 }).map(createEmptyShot)];
+          return { shots: newShots };
+        });
+      },
+
+      deletePage: (pageIndex) => {
+        get().saveHistory();
+        set((state) => {
+          const newShots = [...state.shots];
+          newShots.splice(pageIndex * 8, 8);
+          // ensure at least one shot exists so we don't have empty board sometimes, but if empty, map to 8 shots
+          if (newShots.length === 0) {
+            newShots.push(...Array.from({ length: 8 }).map(createEmptyShot));
+          }
           return { shots: newShots };
         });
       },
