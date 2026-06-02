@@ -28,8 +28,9 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
       const imgData = await toJpeg(el, {
         quality: 0.95,
         pixelRatio: 2,
+        backgroundColor: lightMode ? '#ffffff' : '#252525',
         filter: (node) => {
-          if (node instanceof HTMLElement && node.classList.contains('hide-in-export')) {
+          if (node?.classList?.contains('hide-in-export')) {
             return false;
           }
           return true;

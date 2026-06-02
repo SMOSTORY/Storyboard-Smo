@@ -1,7 +1,21 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
+import { get, set, del } from 'idb-keyval';
 import { v4 as uuidv4 } from 'uuid';
 import { Shot, StoryboardState } from './types';
+
+// Custom storage object for idb-keyval
+const storage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    return (await get(name)) || null; // idb-keyval returns T | undefined, Zustand expects string | null
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await set(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await del(name);
+  },
+};
 
 interface State extends StoryboardState {
   past: StoryboardState[];
@@ -183,6 +197,7 @@ export const useStore = create<Store>()(
     }),
     {
       name: 'storyboard-storage',
+      storage: createJSONStorage(() => storage),
       // Don't persist undo/redo stacks
       partialize: (state) => extractState(state),
     }

@@ -80,14 +80,14 @@ export function ShotCard({ shot, index }: ShotCardProps) {
     >
       {/* Header overlay for dragging action */}
       <div 
-        className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors"
+        className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors hide-in-export"
         {...attributes}
         {...listeners}
       >
         <GripVertical size={13} />
       </div>
 
-      <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity hide-in-export">
         <button 
           onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
           className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
@@ -138,7 +138,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
         {shot.image ? (
           <img src={shot.image} alt={`Shot ${index + 1}`} className="w-full h-full object-cover" />
         ) : (
-          <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight">
+          <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight hide-in-export">
             Drag & Drop Image
           </div>
         )}
