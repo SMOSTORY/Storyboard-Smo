@@ -95,7 +95,7 @@ export function StoryboardGrid() {
               </button>
 
               {/* PAGE HEADER */}
-              <div className="grid grid-cols-3 gap-4 border-b border-[#444] pb-4 mb-4 shrink-0">
+              <div className="grid grid-cols-3 gap-4 pb-1 mb-1 shrink-0">
                 <div>
                   <input 
                     type="text" 
@@ -158,7 +158,7 @@ export function StoryboardGrid() {
               </div>
 
               {/* PAGE FOOTER */}
-              <div className="grid grid-cols-3 gap-4 border-t border-[#444] pt-4 mt-4 shrink-0">
+              <div className="grid grid-cols-3 gap-4 pt-1 mt-1 shrink-0">
                 <div className="flex items-center">
                   <input 
                     type="text" 
