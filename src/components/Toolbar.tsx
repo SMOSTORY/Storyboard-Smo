@@ -62,12 +62,7 @@ export function Toolbar() {
           <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white">S</div>
           <h1 className="text-sm font-semibold tracking-wide uppercase opacity-90 flex items-center">
             Storyboard Pro 
-            <input 
-              type="text"
-              value={projectVersion || 'v1.0.0'}
-              onChange={(e) => setProjectVersion(e.target.value)}
-              className="ml-2 font-mono text-[#666] bg-transparent border-none outline-none w-16 focus:text-[#E0E0E0] transition-colors"
-            />
+            <span className="text-[#666] ml-2 font-mono">{projectVersion || 'v1.0.0'}</span>
           </h1>
         </div>
         <div className="flex items-center space-x-6">
