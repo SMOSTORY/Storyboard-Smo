@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 
 export function Toolbar() {
-  const { undo, redo, past, future, clearState, importState, projectName, projectVersion, setProjectVersion } = useStore();
+  const { undo, redo, past, future, clearState, importState, projectName } = useStore();
   const state = useStore();
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+  const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportJson = () => {
     const data = {
@@ -28,6 +30,7 @@ export function Toolbar() {
     a.download = `${projectName.replace(/\s+/g, '_')}_${format(new Date(), 'yyyy-MM-dd_HHmm')}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    setIsDocActionsModalOpen(false);
   };
 
   const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +51,7 @@ export function Toolbar() {
     };
     reader.readAsText(file);
     e.target.value = '';
+    setIsDocActionsModalOpen(false);
   };
 
   const handleExportPdf = async (lightMode: boolean) => {
@@ -61,8 +65,7 @@ export function Toolbar() {
         <div className="flex items-center space-x-4">
           <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white">S</div>
           <h1 className="text-sm font-semibold tracking-wide uppercase opacity-90 flex items-center">
-            Storyboard Pro 
-            <span className="text-[#666] ml-2 font-mono">{projectVersion || 'v1.0.0'}</span>
+            STORYBOARD SMO
           </h1>
         </div>
         <div className="flex items-center space-x-6">
@@ -87,26 +90,11 @@ export function Toolbar() {
           <div className="h-4 w-[1px] bg-[#333]"></div>
           <div className="flex space-x-2">
             <button
-              onClick={() => setIsClearModalOpen(true)}
-              className="px-4 py-1.5 bg-[#222] hover:bg-red-500/20 border border-[#444] rounded text-xs font-medium transition-colors text-red-400 group flex items-center gap-1.5 shrink-0"
-              title="Clear Board"
+              onClick={() => setIsDocActionsModalOpen(true)}
+              className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
             >
-              <Trash2 size={14} className="opacity-70 group-hover:opacity-100" />
-              Clear
-            </button>
-
-            <label className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors cursor-pointer flex items-center text-[#E0E0E0] shrink-0 gap-1.5 group">
-              <Upload size={14} className="opacity-70 group-hover:opacity-100" />
-              Import JSON
-              <input type="file" accept=".json" className="hidden" onChange={handleImportJson} />
-            </label>
-            
-            <button
-              onClick={handleExportJson}
-              className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] shrink-0 gap-1.5 flex items-center group"
-            >
-              <Download size={14} className="opacity-70 group-hover:opacity-100" />
-              Export State
+              <Settings2 size={14} className="opacity-70 group-hover:opacity-100" />
+              Document Actions
             </button>
 
             <button
@@ -121,7 +109,75 @@ export function Toolbar() {
         </div>
       </header>
 
-      {/* Export Modal */}
+      {/* Document Actions Modal */}
+      {isDocActionsModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#333]">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Document Actions</h2>
+              <button 
+                onClick={() => setIsDocActionsModalOpen(false)}
+                className="text-[#666] hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="p-2">
+              <button
+                onClick={handleExportJson}
+                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
+                  <Download size={16} className="text-[#E0E0E0]" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-white mb-0.5">Save File</div>
+                  <div className="text-xs text-[#999]">Export to a editable JSON file</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
+                  <Upload size={16} className="text-[#E0E0E0]" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-white mb-0.5">Import File</div>
+                  <div className="text-xs text-[#999]">Load an exported JSON file</div>
+                </div>
+              </button>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept=".json" 
+                className="hidden" 
+                onChange={handleImportJson} 
+              />
+
+              <div className="h-[1px] bg-[#333] mx-2 my-1"></div>
+
+              <button
+                onClick={() => {
+                  setIsDocActionsModalOpen(false);
+                  setIsClearModalOpen(true);
+                }}
+                className="w-full text-left p-3 hover:bg-red-500/10 rounded flex items-start gap-3 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded bg-red-500/10 group-hover:bg-red-500/20 flex items-center justify-center shrink-0 transition-colors">
+                  <Trash2 size={16} className="text-red-400 group-hover:text-red-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-red-400 group-hover:text-red-300 mb-0.5">Clear Board</div>
+                  <div className="text-xs text-red-400/70 group-hover:text-red-400/90">Wipe all shots and text</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {isExportModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl p-6 w-full max-w-md flex flex-col">
