@@ -164,7 +164,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
           onChange={handleImageUpload} 
         />
         {shot.image ? (
-          <img src={shot.image} alt={`Shot ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" />
+          <img src={shot.image} alt={`Shot ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="sync" />
         ) : (
           <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight hide-in-export">
             Drag & Drop Image

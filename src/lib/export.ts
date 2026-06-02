@@ -10,22 +10,6 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
       return;
     }
 
-    // Pre-process any massively huge images in DOM that might break html-to-image SVG limits.
-    const images = document.querySelectorAll('.board-page img');
-    for (let i = 0; i < images.length; i++) {
-        const img = images[i] as HTMLImageElement;
-        if (img.src && img.src.length > 1000000) { // If larger than ~1MB base64
-            const canvas = document.createElement('canvas');
-            canvas.width = img.clientWidth > 0 ? img.clientWidth * 2 : 800;
-            canvas.height = img.clientHeight > 0 ? img.clientHeight * 2 : 600;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                img.src = canvas.toDataURL('image/jpeg', 0.8);
-            }
-        }
-    }
-
     const pdf = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
@@ -38,8 +22,15 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
     }
     await new Promise(resolve => setTimeout(resolve, 50));
 
+    const originalScrollY = window.scrollY;
+    
     for (let i = 0; i < elements.length; i++) {
       const el = elements[i];
+      
+      // Scroll into view to force browser to render images that might be off-screen
+      el.scrollIntoView({ behavior: 'instant', block: 'start' });
+      // Wait for the browser to render
+      await new Promise(resolve => setTimeout(resolve, 150));
       
       const options = {
         quality: 0.95,
@@ -71,6 +62,8 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
       el.classList.remove('is-exporting');
       if (lightMode) el.classList.remove('light-export');
     });
+
+    window.scrollTo({ top: originalScrollY, behavior: 'instant' });
 
     const safeProjectName = (projectName || 'Storyboard').trim().replace(/\s+/g, '_');
     pdf.save(`${safeProjectName}_${format(new Date(), 'yyyy-MM-dd_HHmm')}.pdf`);
