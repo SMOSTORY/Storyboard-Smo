@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type, Play } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
+import { PreviewMode } from './PreviewMode';
 
 export function Toolbar() {
   const { undo, redo, past, future, clearState, importState, projectName } = useStore();
@@ -12,6 +13,7 @@ export function Toolbar() {
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
   const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportJson = () => {
@@ -66,10 +68,10 @@ export function Toolbar() {
   return (
     <>
       <header className="flex items-center justify-between px-6 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
-        <div className="flex items-center space-x-4">
-          <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white">S</div>
-          <h1 className="text-sm font-semibold tracking-wide uppercase opacity-90 flex items-center">
-            STORYBOARD SMO
+        <div className="flex items-center space-x-3">
+          <div className="w-6 h-6 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-xs">S</div>
+          <h1 className="text-xs font-medium tracking-widest text-[#777] uppercase flex items-center mt-0.5">
+            Storyboard Smo
           </h1>
         </div>
         <div className="flex items-center space-x-6">
@@ -94,6 +96,14 @@ export function Toolbar() {
           <div className="h-4 w-[1px] bg-[#333]"></div>
           <div className="flex space-x-2">
             <button
+              onClick={() => setIsPreviewOpen(true)}
+              className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
+            >
+              <Play size={14} className="opacity-70 group-hover:opacity-100" />
+              Preview
+            </button>
+
+            <button
               onClick={() => setIsDocActionsModalOpen(true)}
               className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
             >
@@ -103,7 +113,7 @@ export function Toolbar() {
 
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold transition-colors shadow-sm group flex items-center gap-1.5 shrink-0"
+              className="px-4 py-1.5 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] hover:border-[#555] text-white rounded text-xs font-bold transition-colors shadow-sm group flex items-center gap-1.5 shrink-0"
               title="Export PDF"
             >
               <FileDown size={14} />
@@ -349,6 +359,10 @@ export function Toolbar() {
             </div>
           </div>
         </div>
+      )}
+
+      {isPreviewOpen && (
+        <PreviewMode onClose={() => setIsPreviewOpen(false)} />
       )}
     </>
   );
