@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useStore } from '../store';
 import { Bold, Italic, Underline } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -11,13 +11,34 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ value, onChange, className }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
-  const { saveHistory } = useStore();
+  const { saveHistory, globalFontFamily, globalTextColor, globalFontSize } = useStore();
+  const [hasSelection, setHasSelection] = useState(false);
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) {
       editorRef.current.innerHTML = value;
     }
   }, [value]);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0 || selection.toString().trim() === '') {
+        setHasSelection(false);
+        return;
+      }
+      
+      // Check if selection is inside editor
+      if (editorRef.current && editorRef.current.contains(selection.anchorNode)) {
+        setHasSelection(true);
+      } else {
+        setHasSelection(false);
+      }
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+  }, []);
 
   const handleInput = () => {
     if (editorRef.current) {
@@ -36,49 +57,35 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
   };
 
   return (
-    <div className={cn("flex flex-col rounded overflow-hidden shadow-none group/editor", className)}>
-      <div className="flex items-center gap-1 p-0.5 opacity-50 hover:opacity-100 transition-opacity hide-in-export">
-        <button
-          onClick={() => exec('bold')}
-          className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
-          title="Bold"
-        >
-          <Bold size={12} />
-        </button>
-        <button
-          onClick={() => exec('italic')}
-          className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
-          title="Italic"
-        >
-          <Italic size={12} />
-        </button>
-        <button
-          onClick={() => exec('underline')}
-          className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
-          title="Underline"
-        >
-          <Underline size={12} />
-        </button>
-        <div className="w-px h-3 bg-[#444] mx-0.5" />
-        <select 
-          onChange={(e) => exec('fontName', e.target.value)}
-          className="text-[10px] bg-transparent text-[#E0E0E0] outline-none pointer-events-auto cursor-pointer"
-        >
-          <option value="Arial">Arial</option>
-          <option value="Times New Roman">Times</option>
-          <option value="Courier New">Courier</option>
-        </select>
-        <div className="w-px h-3 bg-[#444] mx-0.5" />
-        <input 
-          type="color" 
-          onChange={(e) => exec('foreColor', e.target.value)}
-          className="w-4 h-4 p-0 border-0 pointer-events-auto cursor-pointer bg-transparent rounded"
-          title="Text Color"
-        />
-      </div>
-      <div className="relative flex-1 flex flex-col">
+    <div className={cn("flex flex-col rounded overflow-hidden shadow-none group/editor relative", className)}>
+      {hasSelection && (
+        <div className="absolute top-0 right-0 z-20 bg-[#181818] border border-[#333] shadow-xl rounded flex items-center gap-1 p-0.5 animate-in fade-in zoom-in-95 duration-100 hide-in-export">
+          <button
+            onClick={() => exec('bold')}
+            className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
+            title="Bold"
+          >
+            <Bold size={12} />
+          </button>
+          <button
+            onClick={() => exec('italic')}
+            className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
+            title="Italic"
+          >
+            <Italic size={12} />
+          </button>
+          <button
+            onClick={() => exec('underline')}
+            className="p-1 hover:bg-[#333] rounded text-[#E0E0E0] pointer-events-auto transition-colors"
+            title="Underline"
+          >
+            <Underline size={12} />
+          </button>
+        </div>
+      )}
+      <div className="relative flex-1 flex flex-col pt-1">
         {(!value || value === '<br>' || value === '<div><br></div>' || value.trim() === '') && (
-          <div className="absolute top-1.5 left-1.5 pointer-events-none text-[#666] text-[9px] italic hide-in-export opacity-50 group-hover/editor:opacity-100 transition-opacity">
+          <div className="absolute top-2.5 left-1.5 pointer-events-none text-[#666] text-[9px] italic hide-in-export opacity-50 group-hover/editor:opacity-100 transition-opacity">
             Click to type description...
           </div>
         )}
@@ -87,7 +94,12 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           contentEditable
           onInput={handleInput}
           onBlur={handleBlur}
-          className="flex-1 px-1.5 py-1.5 focus:outline-none min-h-[40px] text-[#BBB] overflow-y-auto border border-transparent hover:border-[#333] focus:border-[#444] rounded transition-colors relative z-10"
+          className="flex-1 px-1.5 py-1.5 focus:outline-none min-h-[40px] overflow-y-auto border border-transparent hover:border-[#333] focus:border-[#444] rounded transition-colors relative z-10"
+          style={{
+            fontFamily: globalFontFamily || 'Roboto',
+            color: globalTextColor || '#BBB',
+            fontSize: globalFontSize || '11px',
+          }}
         />
       </div>
     </div>

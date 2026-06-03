@@ -22,5 +22,8 @@ export interface StoryboardState {
   headerRight: string;
   footerLeft: string;
   footerCenter: string;
+  globalFontFamily: string;
+  globalTextColor: string;
+  globalFontSize: string;
   shots: Shot[];
 }

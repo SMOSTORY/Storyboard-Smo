@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 
@@ -11,6 +11,7 @@ export function Toolbar() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
+  const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportJson = () => {
@@ -21,6 +22,9 @@ export function Toolbar() {
       headerRight: state.headerRight,
       footerLeft: state.footerLeft,
       footerCenter: state.footerCenter,
+      globalFontFamily: state.globalFontFamily,
+      globalTextColor: state.globalTextColor,
+      globalFontSize: state.globalFontSize,
       shots: state.shots,
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -162,6 +166,24 @@ export function Toolbar() {
               <button
                 onClick={() => {
                   setIsDocActionsModalOpen(false);
+                  setIsEditorSettingsModalOpen(true);
+                }}
+                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
+                  <Type size={16} className="text-[#E0E0E0]" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-white mb-0.5">Editor Settings</div>
+                  <div className="text-xs text-[#999]">Change font family, size and color</div>
+                </div>
+              </button>
+
+              <div className="h-[1px] bg-[#333] mx-2 my-1"></div>
+
+              <button
+                onClick={() => {
+                  setIsDocActionsModalOpen(false);
                   setIsClearModalOpen(true);
                 }}
                 className="w-full text-left p-3 hover:bg-red-500/10 rounded flex items-start gap-3 transition-colors group"
@@ -178,6 +200,78 @@ export function Toolbar() {
           </div>
         </div>
       )}
+      {/* Editor Settings Modal */}
+      {isEditorSettingsModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#333]">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Editor Settings</h2>
+              <button 
+                onClick={() => setIsEditorSettingsModalOpen(false)}
+                className="text-[#666] hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="p-4 flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-white">Font Family</label>
+                <select
+                  value={state.globalFontFamily || 'Roboto'}
+                  onChange={(e) => state.setGlobalFontFamily(e.target.value)}
+                  className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="Roboto">Roboto</option>
+                  <option value="Inter">Inter</option>
+                  <option value="Open Sans">Open Sans</option>
+                  <option value="Lato">Lato</option>
+                  <option value="Montserrat">Montserrat</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-white">Font Size</label>
+                <select
+                  value={state.globalFontSize || '11px'}
+                  onChange={(e) => state.setGlobalFontSize(e.target.value)}
+                  className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="9px">9px (Small)</option>
+                  <option value="10px">10px (Normal)</option>
+                  <option value="11px">11px (Default)</option>
+                  <option value="12px">12px (Large)</option>
+                  <option value="13px">13px (Extra Large)</option>
+                  <option value="14px">14px (Huge)</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-white">Text Color</label>
+                <div className="flex items-center gap-3 bg-[#222] border border-[#555] rounded px-3 py-1.5 focus-within:border-[#777] transition-colors">
+                  <input
+                    type="color"
+                    value={state.globalTextColor || '#bbbbbb'}
+                    onChange={(e) => state.setGlobalTextColor(e.target.value)}
+                    className="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent shrink-0"
+                  />
+                  <span className="text-sm text-[#E0E0E0] font-mono uppercase">{state.globalTextColor || '#BBBBBB'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-[#333] flex justify-end">
+              <button
+                onClick={() => setIsEditorSettingsModalOpen(false)}
+                className="px-4 py-2 bg-[#222] hover:bg-[#333] rounded text-sm font-semibold text-white transition-colors border border-[#444]"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isExportModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl p-6 w-full max-w-md flex flex-col">

@@ -30,6 +30,9 @@ export interface StoryboardActions {
   setHeaderRight: (text: string) => void;
   setFooterLeft: (text: string) => void;
   setFooterCenter: (text: string) => void;
+  setGlobalFontFamily: (font: string) => void;
+  setGlobalTextColor: (color: string) => void;
+  setGlobalFontSize: (size: string) => void;
   
   addShot: (index: number) => void;
   addPage: () => void;
@@ -67,6 +70,9 @@ const defaultState: StoryboardState = {
   headerRight: '',
   footerLeft: '',
   footerCenter: '',
+  globalFontFamily: 'Roboto',
+  globalTextColor: '#BBBBBB',
+  globalFontSize: '11px',
   shots: Array.from({ length: 8 }).map(createEmptyShot),
 };
 
@@ -77,6 +83,9 @@ const extractState = (state: State): StoryboardState => ({
   headerRight: state.headerRight,
   footerLeft: state.footerLeft,
   footerCenter: state.footerCenter,
+  globalFontFamily: state.globalFontFamily,
+  globalTextColor: state.globalTextColor,
+  globalFontSize: state.globalFontSize,
   shots: state.shots,
 });
 
@@ -101,6 +110,9 @@ export const useStore = create<Store>()(
       setHeaderRight: (headerRight) => set({ headerRight }),
       setFooterLeft: (footerLeft) => set({ footerLeft }),
       setFooterCenter: (footerCenter) => set({ footerCenter }),
+      setGlobalFontFamily: (globalFontFamily) => set({ globalFontFamily }),
+      setGlobalTextColor: (globalTextColor) => set({ globalTextColor }),
+      setGlobalFontSize: (globalFontSize) => set({ globalFontSize }),
 
       addShot: (index) => {
         get().saveHistory();
