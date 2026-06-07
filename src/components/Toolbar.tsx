@@ -87,70 +87,41 @@ export function Toolbar() {
 
   return (
     <>
-      <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <div className="w-6 h-6 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[10px] sm:text-xs shrink-0">S</div>
-          <h1 className="text-[9px] sm:text-xs font-medium tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
-            <span className="flex flex-col text-right">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
+        <div className="flex items-center space-x-3">
+          <div className="w-7 h-7 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[11px] shrink-0">S</div>
+          <h1 className="text-[9px] font-black tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
+            <span className="flex flex-col text-left">
               <span>Story</span>
               <span>board</span>
+              <span>SMO</span>
             </span>
-            <span className="text-white font-bold ml-1.5 sm:ml-2 text-[10px] sm:text-xs">SMO</span>
           </h1>
         </div>
-        <div className="flex items-center space-x-3 sm:space-x-6">
+        <div className="flex items-center space-x-4">
           <div className="flex bg-[#222] rounded p-1 space-x-1">
             <button
               onClick={undo}
               disabled={past.length === 0}
-              className="p-1.5 sm:px-3 sm:py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="p-1.5 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               title="Undo"
             >
-              <Undo2 size={14} className="sm:hidden" />
-              <span className="hidden sm:inline">Undo</span>
+              <Undo2 size={16} />
             </button>
             <button
               onClick={redo}
               disabled={future.length === 0}
-              className="p-1.5 sm:px-3 sm:py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="p-1.5 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               title="Redo"
             >
-              <Redo2 size={14} className="sm:hidden" />
-              <span className="hidden sm:inline">Redo</span>
-            </button>
-          </div>
-          <div className="hidden sm:block h-4 w-[1px] bg-[#333]"></div>
-          <div className="hidden sm:flex space-x-2">
-            <button
-              onClick={handlePreviewClick}
-              className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
-            >
-              <Play size={14} className="opacity-70 group-hover:opacity-100" />
-              Preview
-            </button>
-
-            <button
-              onClick={() => setIsDocActionsModalOpen(true)}
-              className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
-            >
-              <Settings2 size={14} className="opacity-70 group-hover:opacity-100" />
-              Document Actions
-            </button>
-
-            <button
-              onClick={() => setIsExportModalOpen(true)}
-              className="px-4 py-1.5 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] hover:border-[#555] text-white rounded text-xs font-bold transition-colors shadow-sm group flex items-center gap-1.5 shrink-0"
-              title="Export PDF"
-            >
-              <FileDown size={14} />
-              Export PDF
+              <Redo2 size={16} />
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Toggle (now always visible) */}
           <button 
             onClick={() => setIsMobileMenuOpen(true)}
-            className="sm:hidden p-1.5 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
+            className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
           >
             <Menu size={20} />
           </button>
@@ -159,7 +130,7 @@ export function Toolbar() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm sm:hidden flex justify-end">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-end">
           <div className="w-64 bg-[#181818] h-full shadow-2xl border-l border-[#222] flex flex-col p-4 animate-in slide-in-from-right-full duration-200">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#333]">
               <span className="text-sm font-bold text-white uppercase tracking-wider">Menu</span>
@@ -376,7 +347,7 @@ export function Toolbar() {
               Choose an export theme. The light version uses less ink and is optimized for printing on paper.
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <button
                 onClick={() => handleExportPdf(true)}
                 className="flex flex-col items-center justify-center p-4 border border-[#444] hover:border-blue-500 hover:bg-[#222] rounded-lg transition-colors group"
