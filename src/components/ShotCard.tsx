@@ -149,7 +149,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
       {/* Image Area */}
       <div 
         className={cn(
-          "flex-1 min-h-[100px] bg-[#0F0F0F] rounded mb-1.5 flex flex-col items-center justify-center relative group/image cursor-pointer overflow-hidden",
+          "flex-1 md:flex-auto lg:flex-1 aspect-[4/3] sm:aspect-auto min-h-[150px] sm:min-h-[100px] bg-[#0F0F0F] rounded mb-1.5 flex flex-col items-center justify-center relative group/image cursor-pointer overflow-hidden",
           shot.image ? "border border-transparent" : "border border-dashed border-[#444]"
         )}
         onDragOver={handleDragOver}

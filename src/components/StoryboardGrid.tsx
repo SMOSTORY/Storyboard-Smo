@@ -82,7 +82,7 @@ export function StoryboardGrid() {
           {pages.map((pageShots, pageIndex) => (
             <div 
               key={`page-${pageIndex}`}
-              className="board-page group bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] aspect-[1.414] shrink-0 flex flex-col p-6 relative overflow-hidden"
+              className="board-page group bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] md:aspect-[1.414] shrink-0 flex flex-col p-4 md:p-6 relative sm:overflow-hidden h-auto md:h-auto gap-4 md:gap-0"
               // DIN A4 width/height: 297mm x 210mm. Aspect is 1.414.
             >
               {/* DELETE PAGE BUTTON */}
@@ -95,8 +95,8 @@ export function StoryboardGrid() {
               </button>
 
               {/* PAGE HEADER */}
-              <div className="grid grid-cols-3 gap-4 pb-1 mb-1 shrink-0">
-                <div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pb-1 mb-1 shrink-0">
+                <div className="col-span-2 md:col-span-1">
                   <input 
                     type="text" 
                     value={projectName}
@@ -106,7 +106,7 @@ export function StoryboardGrid() {
                     className="bg-transparent border-none text-sm font-semibold text-white focus:outline-none w-full underline decoration-[#444] placeholder:text-[#666]"
                   />
                 </div>
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <input 
                     type="text" 
                     value={headerCenter}
@@ -116,20 +116,20 @@ export function StoryboardGrid() {
                     className="bg-transparent border-none text-sm text-center font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
                   />
                 </div>
-                <div className="text-right">
+                <div className="col-span-2 md:col-span-1 text-left md:text-right">
                   <input 
                     type="text" 
                     value={headerRight}
                     onChange={(e) => setHeaderRight(e.target.value)}
                     onBlur={() => saveHistory()}
                     placeholder="Header Right"
-                    className="bg-transparent border-none text-sm text-right font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
+                    className="bg-transparent border-none text-sm text-left md:text-right font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
                   />
                 </div>
               </div>
 
               {/* GRID */}
-              <div className="flex-1 min-h-0 grid grid-cols-4 grid-rows-2 gap-3">
+              <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-3 pb-4 lg:pb-0">
                 {pageShots.map((shot) => {
                   const globalIndex = shots.findIndex(s => s.id === shot.id);
                   return (
@@ -158,8 +158,8 @@ export function StoryboardGrid() {
               </div>
 
               {/* PAGE FOOTER */}
-              <div className="grid grid-cols-3 gap-4 pt-1 mt-1 shrink-0">
-                <div className="flex items-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-1 mt-1 shrink-0">
+                <div className="flex items-center col-span-2 md:col-span-1">
                   <input 
                     type="text" 
                     value={footerLeft}
@@ -169,7 +169,7 @@ export function StoryboardGrid() {
                     className="bg-transparent border-none text-[9px] font-semibold text-white focus:outline-none outline-none placeholder:text-[#666] w-full bg-transparent"
                   />
                 </div>
-                <div className="text-center flex items-center justify-center">
+                <div className="hidden md:flex text-center items-center justify-center">
                   <input 
                     type="text" 
                     value={footerCenter}
@@ -179,7 +179,10 @@ export function StoryboardGrid() {
                     className="bg-transparent border-none text-[9px] text-center font-semibold text-white focus:outline-none outline-none placeholder:text-[#666] w-full max-w-[150px] bg-transparent"
                   />
                 </div>
-                <div className="text-right">
+                <div className="text-left md:text-right col-span-2 md:col-span-1 hidden md:block">
+                  <span className="text-[10px] font-mono font-bold text-[#888] uppercase">PAGE {pageIndex + 1} / {pages.length}</span>
+                </div>
+                <div className="text-left md:text-right col-span-2 md:hidden">
                   <span className="text-[10px] font-mono font-bold text-[#888] uppercase">PAGE {pageIndex + 1} / {pages.length}</span>
                 </div>
               </div>

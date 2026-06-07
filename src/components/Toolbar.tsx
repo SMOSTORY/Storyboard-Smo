@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type, Play } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type, Play, Menu } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
@@ -14,6 +14,7 @@ export function Toolbar() {
   const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
   const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [previewStartIndex, setPreviewStartIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,34 +87,40 @@ export function Toolbar() {
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="w-6 h-6 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-xs">S</div>
-          <h1 className="text-xs font-medium tracking-widest text-[#777] uppercase flex items-center mt-0.5">
-            Storyboard Smo
+      <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="w-6 h-6 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[10px] sm:text-xs shrink-0">S</div>
+          <h1 className="text-[9px] sm:text-xs font-medium tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
+            <span className="flex flex-col text-right">
+              <span>Story</span>
+              <span>board</span>
+            </span>
+            <span className="text-white font-bold ml-1.5 sm:ml-2 text-[10px] sm:text-xs">SMO</span>
           </h1>
         </div>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-3 sm:space-x-6">
           <div className="flex bg-[#222] rounded p-1 space-x-1">
             <button
               onClick={undo}
               disabled={past.length === 0}
-              className="px-3 py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 sm:px-3 sm:py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               title="Undo"
             >
-              Undo
+              <Undo2 size={14} className="sm:hidden" />
+              <span className="hidden sm:inline">Undo</span>
             </button>
             <button
               onClick={redo}
               disabled={future.length === 0}
-              className="px-3 py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 sm:px-3 sm:py-1 text-xs hover:bg-[#333] rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               title="Redo"
             >
-              Redo
+              <Redo2 size={14} className="sm:hidden" />
+              <span className="hidden sm:inline">Redo</span>
             </button>
           </div>
-          <div className="h-4 w-[1px] bg-[#333]"></div>
-          <div className="flex space-x-2">
+          <div className="hidden sm:block h-4 w-[1px] bg-[#333]"></div>
+          <div className="hidden sm:flex space-x-2">
             <button
               onClick={handlePreviewClick}
               className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
@@ -139,8 +146,68 @@ export function Toolbar() {
               Export PDF
             </button>
           </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="sm:hidden p-1.5 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
+          >
+            <Menu size={20} />
+          </button>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm sm:hidden flex justify-end">
+          <div className="w-64 bg-[#181818] h-full shadow-2xl border-l border-[#222] flex flex-col p-4 animate-in slide-in-from-right-full duration-200">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#333]">
+              <span className="text-sm font-bold text-white uppercase tracking-wider">Menu</span>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="text-[#666] hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handlePreviewClick();
+                }}
+                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+              >
+                <Play size={16} className="text-[#AAA]" />
+                Preview
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsDocActionsModalOpen(true);
+                }}
+                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+              >
+                <Settings2 size={16} className="text-[#AAA]" />
+                Document Actions
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsExportModalOpen(true);
+                }}
+                className="flex items-center gap-3 p-3 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] rounded text-sm text-white font-bold transition-colors"
+              >
+                <FileDown size={16} />
+                Export PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Document Actions Modal */}
       {isDocActionsModalOpen && (
