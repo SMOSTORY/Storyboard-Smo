@@ -14,7 +14,26 @@ export function Toolbar() {
   const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
   const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewStartIndex, setPreviewStartIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePreviewClick = () => {
+    const pages = document.querySelectorAll('.board-page');
+    let visiblePageIndex = 0;
+    
+    for (let i = 0; i < pages.length; i++) {
+      const rect = pages[i].getBoundingClientRect();
+      // If the top of the page is within the top half of the screen, or it spans across the middle
+      if ((rect.top >= -rect.height / 2 && rect.top < window.innerHeight / 2) || 
+          (rect.top < 0 && rect.bottom > window.innerHeight / 2)) {
+        visiblePageIndex = i;
+        break;
+      }
+    }
+    
+    setPreviewStartIndex(Math.min(visiblePageIndex * 8, state.shots.length - 1));
+    setIsPreviewOpen(true);
+  };
 
   const handleExportJson = () => {
     const data = {
@@ -96,7 +115,7 @@ export function Toolbar() {
           <div className="h-4 w-[1px] bg-[#333]"></div>
           <div className="flex space-x-2">
             <button
-              onClick={() => setIsPreviewOpen(true)}
+              onClick={handlePreviewClick}
               className="px-4 py-1.5 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-xs font-medium transition-colors text-[#E0E0E0] group flex items-center gap-1.5 shrink-0"
             >
               <Play size={14} className="opacity-70 group-hover:opacity-100" />
@@ -362,7 +381,7 @@ export function Toolbar() {
       )}
 
       {isPreviewOpen && (
-        <PreviewMode onClose={() => setIsPreviewOpen(false)} />
+        <PreviewMode onClose={() => setIsPreviewOpen(false)} initialIndex={previewStartIndex} />
       )}
     </>
   );

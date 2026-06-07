@@ -4,12 +4,13 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PreviewModeProps {
   onClose: () => void;
+  initialIndex?: number;
 }
 
-export function PreviewMode({ onClose }: PreviewModeProps) {
+export function PreviewMode({ onClose, initialIndex = 0 }: PreviewModeProps) {
   const { shots, globalFontFamily, globalTextColor, globalFontSize } = useStore();
   const validShots = shots;
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
