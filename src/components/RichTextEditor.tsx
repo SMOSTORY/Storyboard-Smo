@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { useStore } from '../store';
-import { Bold, Italic, Underline } from 'lucide-react';
+import { Bold, Italic, Underline, Eraser } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface RichTextEditorProps {
@@ -50,6 +50,45 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
     saveHistory();
   };
 
+  const handleClearFormat = () => {
+    // Standard clear format
+    document.execCommand('removeFormat', false, '');
+    
+    // Sometimes pasted content has inline styles that removeFormat doesn't clear.
+    // So we can also traverse the selection and strip styles.
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const container = range.commonAncestorContainer;
+      
+      const element = container.nodeType === Node.ELEMENT_NODE 
+        ? container as HTMLElement 
+        : container.parentElement;
+        
+      if (element && editorRef.current?.contains(element)) {
+        // If they selected the whole editor or part of it, clean up spans
+        const spans = element.querySelectorAll('span, font');
+        spans.forEach(span => {
+          if (selection.containsNode(span, true)) {
+            span.removeAttribute('style');
+            span.removeAttribute('class');
+            span.removeAttribute('color');
+            span.removeAttribute('size');
+            span.removeAttribute('face');
+          }
+        });
+        
+        // Also clean the element itself if it's a span or p etc.
+        if (element.tagName !== 'DIV' && element !== editorRef.current) {
+          element.removeAttribute('style');
+        }
+      }
+    }
+    
+    editorRef.current?.focus();
+    handleInput();
+  };
+
   const exec = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     editorRef.current?.focus();
@@ -80,6 +119,13 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
             title="Underline"
           >
             <Underline size={12} />
+          </button>
+          <button
+            onClick={handleClearFormat}
+            className="p-1 hover:bg-[#333] rounded text-red-400 pointer-events-auto transition-colors"
+            title="Clear Formatting"
+          >
+            <Eraser size={12} />
           </button>
         </div>
       )}
