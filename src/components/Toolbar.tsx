@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings2, X, Type, Play, Menu } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
@@ -146,6 +146,41 @@ export function Toolbar() {
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
+                  handleExportJson();
+                }}
+                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+              >
+                <Download size={16} className="text-[#AAA]" />
+                Save File
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  fileInputRef.current?.click();
+                }}
+                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+              >
+                <Upload size={16} className="text-[#AAA]" />
+                Import File
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsExportModalOpen(true);
+                }}
+                className="flex items-center gap-3 p-3 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] rounded text-sm text-white font-bold transition-colors"
+              >
+                <FileDown size={16} />
+                Export PDF
+              </button>
+
+              <div className="h-[1px] bg-[#333] w-full my-1"></div>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
                   handlePreviewClick();
                 }}
                 className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
@@ -161,20 +196,17 @@ export function Toolbar() {
                 }}
                 className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
               >
-                <Settings2 size={16} className="text-[#AAA]" />
-                Document Actions
+                <Settings size={16} className="text-[#AAA]" />
+                File Settings
               </button>
 
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsExportModalOpen(true);
-                }}
-                className="flex items-center gap-3 p-3 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] rounded text-sm text-white font-bold transition-colors"
-              >
-                <FileDown size={16} />
-                Export PDF
-              </button>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept=".json" 
+                className="hidden" 
+                onChange={handleImportJson} 
+              />
             </div>
           </div>
         </div>
@@ -185,7 +217,7 @@ export function Toolbar() {
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[#333]">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Document Actions</h2>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wide">File Settings</h2>
               <button 
                 onClick={() => setIsDocActionsModalOpen(false)}
                 className="text-[#666] hover:text-white transition-colors"
@@ -195,41 +227,6 @@ export function Toolbar() {
             </div>
             
             <div className="p-2">
-              <button
-                onClick={handleExportJson}
-                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
-                  <Download size={16} className="text-[#E0E0E0]" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-white mb-0.5">Save File</div>
-                  <div className="text-xs text-[#999]">Export to a editable JSON file</div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
-                  <Upload size={16} className="text-[#E0E0E0]" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-white mb-0.5">Import File</div>
-                  <div className="text-xs text-[#999]">Load an exported JSON file</div>
-                </div>
-              </button>
-              <input 
-                ref={fileInputRef}
-                type="file" 
-                accept=".json" 
-                className="hidden" 
-                onChange={handleImportJson} 
-              />
-
-              <div className="h-[1px] bg-[#333] mx-2 my-1"></div>
-
               <button
                 onClick={() => {
                   setIsDocActionsModalOpen(false);
