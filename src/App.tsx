@@ -29,7 +29,7 @@ export default function App() {
   }, [shots]);
 
   return (
-    <div className="font-sans text-[#E0E0E0] h-screen w-screen bg-[#0A0A0A] selection:bg-blue-900/50 flex flex-col overflow-hidden">
+    <div className="font-sans text-[#E0E0E0] h-[100dvh] w-full bg-[#0A0A0A] selection:bg-blue-900/50 flex flex-col overflow-hidden">
       <Toolbar />
       <StoryboardGrid />
       <footer className="bg-[#111] border-t border-[#222] px-4 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-2 sm:gap-0">
