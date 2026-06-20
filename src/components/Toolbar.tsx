@@ -128,6 +128,14 @@ export function Toolbar() {
         </div>
       </header>
 
+      <input 
+        ref={fileInputRef}
+        type="file" 
+        accept=".json" 
+        className="hidden" 
+        onChange={handleImportJson} 
+      />
+
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-end">
@@ -199,14 +207,6 @@ export function Toolbar() {
                 <Settings size={16} className="text-[#AAA]" />
                 File Settings
               </button>
-
-              <input 
-                ref={fileInputRef}
-                type="file" 
-                accept=".json" 
-                className="hidden" 
-                onChange={handleImportJson} 
-              />
             </div>
           </div>
         </div>
