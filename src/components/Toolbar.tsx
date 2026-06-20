@@ -138,28 +138,25 @@ export function Toolbar() {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-end">
-          <div className="w-64 bg-[#181818] h-full shadow-2xl border-l border-[#222] flex flex-col p-4 animate-in slide-in-from-right-full duration-200">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#333]">
-              <span className="text-sm font-bold text-white uppercase tracking-wider">Menu</span>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="text-[#666] hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3">
+        <div 
+          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex justify-end"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div 
+            className="w-[280px] bg-[#0F1115] h-full shadow-2xl border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6 animate-in slide-in-from-right-full duration-200"
+            onClick={(e) => e.stopPropagation()}
+            style={{ fontFamily: "'Pliant', sans-serif" }}
+          >
+            <div className="flex flex-col py-2">
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   handleExportJson();
                 }}
-                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
               >
-                <Download size={16} className="text-[#AAA]" />
-                Save File
+                <Download size={20} className="stroke-[1.5]" />
+                <span>Save File</span>
               </button>
 
               <button
@@ -167,10 +164,10 @@ export function Toolbar() {
                   setIsMobileMenuOpen(false);
                   fileInputRef.current?.click();
                 }}
-                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
               >
-                <Upload size={16} className="text-[#AAA]" />
-                Import File
+                <Upload size={20} className="stroke-[1.5]" />
+                <span>Import File</span>
               </button>
 
               <button
@@ -178,23 +175,24 @@ export function Toolbar() {
                   setIsMobileMenuOpen(false);
                   setIsExportModalOpen(true);
                 }}
-                className="flex items-center gap-3 p-3 bg-[#2A2A2A] hover:bg-[#333] border border-[#444] rounded text-sm text-white font-bold transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left relative"
               >
-                <FileDown size={16} />
-                Export PDF
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#2DD4BF] opacity-0 hover:opacity-100 transition-opacity"></div>
+                <FileDown size={20} className="stroke-[1.5]" />
+                <span>Export PDF</span>
               </button>
 
-              <div className="h-[1px] bg-[#333] w-full my-1"></div>
+              <div className="h-[1px] bg-[#333] mx-6 my-4"></div>
 
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   handlePreviewClick();
                 }}
-                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
               >
-                <Play size={16} className="text-[#AAA]" />
-                Preview
+                <Play size={20} className="stroke-[1.5]" />
+                <span>Preview</span>
               </button>
 
               <button
@@ -202,10 +200,10 @@ export function Toolbar() {
                   setIsMobileMenuOpen(false);
                   setIsDocActionsModalOpen(true);
                 }}
-                className="flex items-center gap-3 p-3 bg-[#222] hover:bg-[#333] rounded text-sm text-[#E0E0E0] font-medium transition-colors"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
               >
-                <Settings size={16} className="text-[#AAA]" />
-                File Settings
+                <Settings size={20} className="stroke-[1.5]" />
+                <span>File Settings</span>
               </button>
             </div>
           </div>
