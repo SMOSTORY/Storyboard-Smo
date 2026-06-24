@@ -161,20 +161,10 @@ export function Toolbar() {
                   className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex justify-between items-center"
                 >
                   <div className="flex items-center gap-3">
-                    <File size={18} className="text-[#AAA]" />
-                    <span>Save</span>
+                    <Download size={18} className="text-[#AAA]" />
+                    <span>Save & Download</span>
                   </div>
                   <span className="text-[#666] text-xs">⌘S</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setIsFileMenuOpen(false);
-                    handleExportJson();
-                  }}
-                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
-                >
-                  <Download size={18} className="text-[#AAA]" />
-                  <span>Download</span>
                 </button>
                 <div className="h-[1px] bg-[#333] my-2 mx-2" />
                 <button
