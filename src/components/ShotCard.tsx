@@ -103,7 +103,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative group transition-opacity",
+        "relative group/card transition-opacity",
         isDragging && "opacity-50 z-10"
       )}
     >
@@ -126,14 +126,14 @@ export function ShotCard({ shot, index }: ShotCardProps) {
           {!isMetadataExpanded && (
             <>
               <div 
-                className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors hide-in-export"
+                className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover/card:opacity-100 transition-colors hide-in-export"
                 {...attributes}
                 {...listeners}
               >
                 <GripVertical size={13} />
               </div>
 
-              <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity hide-in-export">
+              <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity hide-in-export">
                 <button 
                   onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
                   className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
