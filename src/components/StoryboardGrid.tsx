@@ -117,7 +117,7 @@ export function StoryboardGrid() {
                     onKeyDown={(e) => e.stopPropagation()}
                     onPointerDown={(e) => e.stopPropagation()}
                     placeholder="Header Center"
-                    className="bg-transparent border-none text-sm text-center font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
+                    className="bg-transparent border-none text-sm text-center font-semibold text-white focus:outline-none w-full opacity-80 placeholder-transparent group-hover:placeholder-[#666] focus:placeholder-[#666]"
                   />
                 </div>
                 <div className="col-span-2 md:col-span-1 text-left md:text-right">
@@ -129,7 +129,7 @@ export function StoryboardGrid() {
                     onKeyDown={(e) => e.stopPropagation()}
                     onPointerDown={(e) => e.stopPropagation()}
                     placeholder="Header Right"
-                    className="bg-transparent border-none text-sm text-left md:text-right font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
+                    className="bg-transparent border-none text-sm text-left md:text-right font-semibold text-white focus:outline-none w-full opacity-80 placeholder-transparent group-hover:placeholder-[#666] focus:placeholder-[#666]"
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function StoryboardGrid() {
                     onChange={(e) => setFooterLeft(e.target.value)}
                     onBlur={() => saveHistory()}
                     placeholder="Footer Left"
-                    className="bg-transparent border-none text-[9px] font-semibold text-white focus:outline-none outline-none placeholder:text-[#666] w-full bg-transparent"
+                    className="bg-transparent border-none text-[9px] font-semibold text-white focus:outline-none outline-none placeholder-transparent group-hover:placeholder-[#666] focus:placeholder-[#666] w-full"
                   />
                 </div>
                 <div className="hidden md:flex text-center items-center justify-center">
@@ -182,7 +182,7 @@ export function StoryboardGrid() {
                     onChange={(e) => setFooterCenter(e.target.value)}
                     onBlur={() => saveHistory()}
                     placeholder="Footer Center"
-                    className="bg-transparent border-none text-[9px] text-center font-semibold text-white focus:outline-none outline-none placeholder:text-[#666] w-full max-w-[150px] bg-transparent"
+                    className="bg-transparent border-none text-[9px] text-center font-semibold text-white focus:outline-none outline-none placeholder-transparent group-hover:placeholder-[#666] focus:placeholder-[#666] w-full max-w-[150px]"
                   />
                 </div>
                 <div className="text-left md:text-right col-span-2 md:col-span-1 hidden md:block">
