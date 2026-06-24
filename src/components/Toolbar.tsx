@@ -180,6 +180,15 @@ export function Toolbar() {
               </div>
             )}
           </div>
+
+          <button
+            onClick={handlePreviewClick}
+            className="flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md transition-colors shadow-sm border bg-[#181818] text-[#E0E0E0] hover:bg-[#222] hover:text-white border-[#333]"
+            title="Preview"
+          >
+            <Play size={16} />
+            <span>Preview</span>
+          </button>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex bg-[#222] rounded p-1 space-x-1">
@@ -200,14 +209,6 @@ export function Toolbar() {
               <Redo2 size={16} />
             </button>
           </div>
-
-          <button
-            onClick={handlePreviewClick}
-            className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors flex items-center gap-2"
-            title="Preview"
-          >
-            <Play size={20} />
-          </button>
 
           {/* Mobile Menu Toggle (now always visible) */}
           <button 
