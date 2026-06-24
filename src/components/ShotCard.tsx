@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ImagePlus, GripVertical, ChevronDown, ChevronUp, Trash2, Plus } from 'lucide-react';
+import { ImagePlus, GripVertical, ChevronDown, ChevronUp, Trash2, Plus, ChevronRight } from 'lucide-react';
 import { Shot, ShotType } from '../types';
 import { useStore } from '../store';
 import { RichTextEditor } from './RichTextEditor';
@@ -33,6 +33,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 10 : 1,
+    perspective: '1000px'
   };
 
   const processImageFile = (file: File) => {
@@ -102,158 +103,215 @@ export function ShotCard({ shot, index }: ShotCardProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "bg-[#1E1E1E] border border-[#333] rounded-sm p-2 flex flex-col relative group transition-opacity",
-        isDragging && "opacity-50 border-blue-400 z-10"
+        "relative group transition-opacity",
+        isDragging && "opacity-50 z-10"
       )}
     >
-      {/* Header overlay for dragging action */}
       <div 
-        className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors hide-in-export"
-        {...attributes}
-        {...listeners}
+        className="w-full h-full transition-transform duration-500 ease-in-out"
+        style={{ 
+          transformStyle: 'preserve-3d', 
+          transform: isMetadataExpanded ? 'rotateY(180deg)' : 'rotateY(0deg)' 
+        }}
       >
-        <GripVertical size={13} />
-      </div>
-
-      <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity hide-in-export">
-        <button 
-          onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
-          className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
-          title="Add shot after"
+        {/* FRONT SIDE */}
+        <div 
+          className={cn(
+            "bg-[#1E1E1E] border border-[#333] rounded-sm p-2 flex flex-col w-full h-full",
+            isMetadataExpanded && "pointer-events-none"
+          )}
+          style={{ backfaceVisibility: 'hidden' }}
         >
-          <Plus size={13} />
-        </button>
-        <button 
-          onClick={(e) => { e.stopPropagation(); deleteShot(shot.id); }}
-          className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-red-400 rounded shadow-lg transition-colors pointer-events-auto"
-          title="Delete shot"
+          {/* Header overlay for dragging action */}
+          {!isMetadataExpanded && (
+            <>
+              <div 
+                className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover:opacity-100 transition-colors hide-in-export"
+                {...attributes}
+                {...listeners}
+              >
+                <GripVertical size={13} />
+              </div>
+
+              <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity hide-in-export">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
+                  className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
+                  title="Add shot after"
+                >
+                  <Plus size={13} />
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); deleteShot(shot.id); }}
+                  className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-red-400 rounded shadow-lg transition-colors pointer-events-auto"
+                  title="Delete shot"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </>
+          )}
+
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-[10px] font-mono font-bold bg-[#222] text-[#888] px-1.5 rounded text-center inline-block py-0.5 min-w-[60px]">
+              SHOT {String(index + 1).padStart(2, '0')}
+            </span>
+            <input
+              type="text"
+              placeholder="SCENE LABEL"
+              value={shot.sceneNumber}
+              onChange={(e) => updateShot(shot.id, { sceneNumber: e.target.value })}
+              onBlur={() => saveHistory()}
+              onKeyDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="text-[10px] font-semibold opacity-60 italic text-right bg-transparent border-none focus:outline-none focus:opacity-100 text-white placeholder:text-[#666] w-full ml-2"
+            />
+          </div>
+
+          {/* Image Area */}
+          <div 
+            className={cn(
+              "flex-1 md:flex-auto lg:flex-1 aspect-[4/3] sm:aspect-auto min-h-[150px] sm:min-h-[100px] bg-[#0F0F0F] rounded mb-1.5 flex flex-col items-center justify-center relative group/image cursor-pointer overflow-hidden",
+              shot.image ? "border border-transparent" : "border border-dashed border-[#444]"
+            )}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={handleImageClick}
+          >
+            <input 
+              type="file" 
+              className="hidden" 
+              ref={fileInputRef} 
+              accept="image/*"
+              onChange={handleImageUpload} 
+            />
+            {shot.image ? (
+              <img src={shot.image} alt={`Shot ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="sync" />
+            ) : (
+              <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight hide-in-export">
+                Drag & Drop Image
+              </div>
+            )}
+            <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors pointer-events-none" />
+          </div>
+
+          <div className="mb-1 flex-1 flex flex-col min-h-[50px] mt-1">
+            <RichTextEditor
+              value={shot.description}
+              onChange={(val) => updateShot(shot.id, { description: val })}
+              className="flex-1 text-[9px] leading-tight text-[#BBB] bg-transparent border-none shadow-none"
+            />
+          </div>
+
+          {/* Read-only metadata summary */}
+          {(shot.metadata.shotType || shot.metadata.focalLength || shot.metadata.cameraMovement || shot.metadata.dialogue) && (
+            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 pt-1.5 border-t border-[#222]">
+              {shot.metadata.shotType && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Type</span>{shot.metadata.shotType}</div>}
+              {shot.metadata.focalLength && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Lens</span>{shot.metadata.focalLength}</div>}
+              {shot.metadata.cameraMovement && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Move</span>{shot.metadata.cameraMovement}</div>}
+              {shot.metadata.dialogue && <div className="text-[8px] text-[#A1A1AA] w-full mt-0.5"><span className="text-[#555] uppercase font-semibold mr-1">Notes</span><span className="italic">{shot.metadata.dialogue}</span></div>}
+            </div>
+          )}
+
+          {/* Metadata Toggle */}
+          <button 
+            onClick={() => setIsMetadataExpanded(true)}
+            className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold hide-in-export"
+          >
+            <span>Show Details</span>
+            <ChevronRight size={12} />
+          </button>
+        </div>
+
+        {/* BACK SIDE */}
+        <div 
+          className={cn(
+            "absolute inset-0 bg-[#1E1E1E] border border-[#333] rounded-sm p-3 flex flex-col hide-in-export shadow-xl",
+            !isMetadataExpanded && "pointer-events-none"
+          )}
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <Trash2 size={13} />
-        </button>
-      </div>
-
-      <div className="flex justify-between items-center mb-1.5">
-        <span className="text-[10px] font-mono font-bold bg-[#222] text-[#888] px-1.5 rounded text-center inline-block py-0.5 min-w-[60px]">
-          SHOT {String(index + 1).padStart(2, '0')}
-        </span>
-        <input
-          type="text"
-          placeholder="SCENE LABEL"
-          value={shot.sceneNumber}
-          onChange={(e) => updateShot(shot.id, { sceneNumber: e.target.value })}
-          onBlur={() => saveHistory()}
-          className="text-[10px] font-semibold opacity-60 italic text-right bg-transparent border-none focus:outline-none focus:opacity-100 text-white placeholder:text-[#666] w-full ml-2"
-        />
-      </div>
-
-      {/* Image Area */}
-      <div 
-        className={cn(
-          "flex-1 md:flex-auto lg:flex-1 aspect-[4/3] sm:aspect-auto min-h-[150px] sm:min-h-[100px] bg-[#0F0F0F] rounded mb-1.5 flex flex-col items-center justify-center relative group/image cursor-pointer overflow-hidden",
-          shot.image ? "border border-transparent" : "border border-dashed border-[#444]"
-        )}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onClick={handleImageClick}
-      >
-        <input 
-          type="file" 
-          className="hidden" 
-          ref={fileInputRef} 
-          accept="image/*"
-          onChange={handleImageUpload} 
-        />
-        {shot.image ? (
-          <img src={shot.image} alt={`Shot ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="sync" />
-        ) : (
-          <div className="text-[10px] text-[#555] font-medium uppercase text-center leading-tight hide-in-export">
-            Drag & Drop Image
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[10px] font-mono font-bold bg-[#222] text-[#888] px-1.5 rounded text-center inline-block py-0.5 min-w-[60px]">
+              SHOT {String(index + 1).padStart(2, '0')}
+            </span>
+            {shot.sceneNumber && (
+              <span className="text-[10px] font-semibold opacity-60 italic text-right text-white ml-2">
+                {shot.sceneNumber}
+              </span>
+            )}
           </div>
-        )}
-        <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors pointer-events-none" />
-      </div>
 
-      <div className="mb-1 flex-1 flex flex-col min-h-[50px] mt-1">
-        <RichTextEditor
-          value={shot.description}
-          onChange={(val) => updateShot(shot.id, { description: val })}
-          className="flex-1 text-[9px] leading-tight text-[#BBB] bg-transparent border-none shadow-none"
-        />
-      </div>
+          <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-1 pb-2 custom-scrollbar">
+            <div className="flex flex-col">
+              <label className="text-[9px] text-[#888] uppercase font-semibold mb-1 tracking-wider">Shot Type</label>
+              <select 
+                value={shot.metadata.shotType}
+                onChange={(e) => {
+                  updateShot(shot.id, { 
+                    metadata: { ...shot.metadata, shotType: e.target.value as ShotType } 
+                  });
+                  saveHistory();
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="bg-[#111] border border-[#333] rounded px-2 py-1.5 text-[#E0E0E0] outline-none w-full text-[11px] focus:border-[#555]"
+              >
+                <option value="">- Select -</option>
+                {SHOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-[9px] text-[#888] uppercase font-semibold mb-1 tracking-wider">Focal Length</label>
+              <input 
+                type="text" 
+                placeholder="e.g. 50mm"
+                value={shot.metadata.focalLength}
+                onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, focalLength: e.target.value } })}
+                onBlur={() => saveHistory()}
+                onKeyDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="bg-[#111] border border-[#333] rounded px-2 py-1.5 text-[#E0E0E0] outline-none w-full text-[11px] focus:border-[#555] placeholder:text-[#444]"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-[9px] text-[#888] uppercase font-semibold mb-1 tracking-wider">Camera Movement</label>
+              <input 
+                type="text" 
+                placeholder="e.g. Pan, Tilt, Dolly"
+                value={shot.metadata.cameraMovement}
+                onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, cameraMovement: e.target.value } })}
+                onBlur={() => saveHistory()}
+                onKeyDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="bg-[#111] border border-[#333] rounded px-2 py-1.5 text-[#E0E0E0] outline-none w-full text-[11px] focus:border-[#555] placeholder:text-[#444]"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-[9px] text-[#888] uppercase font-semibold mb-1 tracking-wider">Dialogue / Notes</label>
+              <textarea 
+                rows={4}
+                placeholder="Actor lines, SFX..."
+                value={shot.metadata.dialogue}
+                onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, dialogue: e.target.value } })}
+                onBlur={() => saveHistory()}
+                onKeyDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="bg-[#111] border border-[#333] rounded px-2 py-1.5 text-[#E0E0E0] outline-none w-full text-[11px] focus:border-[#555] resize-none placeholder:text-[#444]"
+              />
+            </div>
+          </div>
 
-      {/* Read-only metadata summary */}
-      {!isMetadataExpanded && (shot.metadata.shotType || shot.metadata.focalLength || shot.metadata.cameraMovement || shot.metadata.dialogue) && (
-        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 pt-1.5 border-t border-[#222]">
-          {shot.metadata.shotType && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Type</span>{shot.metadata.shotType}</div>}
-          {shot.metadata.focalLength && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Lens</span>{shot.metadata.focalLength}</div>}
-          {shot.metadata.cameraMovement && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Move</span>{shot.metadata.cameraMovement}</div>}
-          {shot.metadata.dialogue && <div className="text-[8px] text-[#A1A1AA] w-full mt-0.5"><span className="text-[#555] uppercase font-semibold mr-1">Notes</span><span className="italic">{shot.metadata.dialogue}</span></div>}
+          <button 
+            onClick={() => setIsMetadataExpanded(false)}
+            className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold border-t border-[#333] pt-2"
+          >
+            <ChevronRight size={12} className="rotate-180" />
+            <span>Hide Details</span>
+          </button>
         </div>
-      )}
-
-      {/* Metadata Toggle */}
-      <button 
-        onClick={() => setIsMetadataExpanded(!isMetadataExpanded)}
-        className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold hide-in-export"
-      >
-        {isMetadataExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        <span>{isMetadataExpanded ? 'Hide Details' : 'Show Details'}</span>
-      </button>
-
-      {/* Professional Metadata */}
-      {isMetadataExpanded && (
-        <div className="grid grid-cols-2 gap-1 mt-1 border-t border-[#333] pt-1.5">
-          <div className="flex flex-col">
-            <label className="text-[8px] text-[#666] uppercase">Shot Type</label>
-            <select 
-              value={shot.metadata.shotType}
-              onChange={(e) => {
-                updateShot(shot.id, { 
-                  metadata: { ...shot.metadata, shotType: e.target.value as ShotType } 
-                });
-                saveHistory();
-              }}
-              className="bg-[#111] border border-[#333] rounded px-1 py-0.5 text-[#999] outline-none mt-0.5 w-full text-[9px]"
-            >
-              <option value="">- Select -</option>
-              {SHOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div className="flex flex-col">
-            <label className="text-[8px] text-[#666] uppercase">Focal Length</label>
-            <input 
-              type="text" 
-              placeholder="e.g. 50mm"
-              value={shot.metadata.focalLength}
-              onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, focalLength: e.target.value } })}
-              onBlur={() => saveHistory()}
-              className="bg-[#111] border border-[#333] rounded px-1 py-0.5 text-[#999] outline-none mt-0.5 w-full text-[9px]"
-            />
-          </div>
-          <div className="flex flex-col col-span-2">
-            <label className="text-[8px] text-[#666] uppercase">Camera Movement</label>
-            <input 
-              type="text" 
-              placeholder="e.g. Pan, Tilt, Dolly"
-              value={shot.metadata.cameraMovement}
-              onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, cameraMovement: e.target.value } })}
-              onBlur={() => saveHistory()}
-              className="bg-[#111] border border-[#333] rounded px-1 py-0.5 text-[#999] outline-none mt-0.5 w-full text-[9px]"
-            />
-          </div>
-          <div className="flex flex-col col-span-2">
-            <label className="text-[8px] text-[#666] uppercase">Dialogue / Notes</label>
-            <textarea 
-              rows={2}
-              placeholder="Actor lines, SFX..."
-              value={shot.metadata.dialogue}
-              onChange={(e) => updateShot(shot.id, { metadata: { ...shot.metadata, dialogue: e.target.value } })}
-              onBlur={() => saveHistory()}
-              className="bg-[#111] border border-[#333] rounded px-1 py-0.5 text-[#999] outline-none mt-0.5 w-full text-[9px] resize-none"
-            />
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
+

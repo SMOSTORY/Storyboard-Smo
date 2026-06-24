@@ -102,6 +102,8 @@ export function StoryboardGrid() {
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
                     onBlur={() => saveHistory()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                     placeholder="Project Name"
                     className="bg-transparent border-none text-sm font-semibold text-white focus:outline-none w-full underline decoration-[#444] placeholder:text-[#666]"
                   />
@@ -112,6 +114,8 @@ export function StoryboardGrid() {
                     value={headerCenter}
                     onChange={(e) => setHeaderCenter(e.target.value)}
                     onBlur={() => saveHistory()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                     placeholder="Header Center"
                     className="bg-transparent border-none text-sm text-center font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
                   />
@@ -122,6 +126,8 @@ export function StoryboardGrid() {
                     value={headerRight}
                     onChange={(e) => setHeaderRight(e.target.value)}
                     onBlur={() => saveHistory()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
                     placeholder="Header Right"
                     className="bg-transparent border-none text-sm text-left md:text-right font-semibold text-white focus:outline-none w-full opacity-80 placeholder:text-[#666]"
                   />

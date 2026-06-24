@@ -140,6 +140,8 @@ export function RichTextEditor({ value, onChange, className }: RichTextEditorPro
           contentEditable
           onInput={handleInput}
           onBlur={handleBlur}
+          onKeyDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
           className="flex-1 px-1.5 py-1.5 focus:outline-none min-h-[40px] overflow-y-auto border border-transparent hover:border-[#333] focus:border-[#444] rounded transition-colors relative z-10"
           style={{
             fontFamily: globalFontFamily || 'Roboto',
