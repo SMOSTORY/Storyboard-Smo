@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
@@ -15,8 +15,31 @@ export function Toolbar() {
   const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [previewStartIndex, setPreviewStartIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (fileMenuRef.current && !fileMenuRef.current.contains(event.target as Node)) {
+        setIsFileMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleExportJson();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [state]);
 
   const handlePreviewClick = () => {
     const pages = document.querySelectorAll('.board-page');
@@ -88,15 +111,85 @@ export function Toolbar() {
   return (
     <>
       <header className="flex items-center justify-between px-4 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="w-7 h-7 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[11px] shrink-0">S</div>
-          <h1 className="text-[9px] font-black tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
-            <span className="flex flex-col text-left">
-              <span>Story</span>
-              <span>board</span>
-              <span>SMO</span>
-            </span>
-          </h1>
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-7 h-7 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[11px] shrink-0">S</div>
+            <h1 className="text-[9px] font-black tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
+              <span className="flex flex-col text-left">
+                <span>Story</span>
+                <span>board</span>
+                <span>SMO</span>
+              </span>
+            </h1>
+          </div>
+
+          <div className="relative" ref={fileMenuRef}>
+            <button 
+              onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
+              className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md transition-colors shadow-sm border ${isFileMenuOpen ? 'bg-[#222] text-white border-[#444]' : 'bg-[#181818] text-[#E0E0E0] hover:bg-[#222] hover:text-white border-[#333]'}`}
+            >
+              <File size={16} />
+              <span>File</span>
+            </button>
+            {isFileMenuOpen && (
+              <div className="absolute top-full left-0 mt-2 w-64 bg-[#181818] border border-[#333] rounded-md shadow-2xl py-2 z-[110]">
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    setIsClearModalOpen(true);
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
+                >
+                  <Plus size={18} className="text-[#AAA]" />
+                  <span>New</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    fileInputRef.current?.click();
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
+                >
+                  <Upload size={18} className="text-[#AAA]" />
+                  <span>Import</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    handleExportJson();
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex justify-between items-center"
+                >
+                  <div className="flex items-center gap-3">
+                    <File size={18} className="text-[#AAA]" />
+                    <span>Save</span>
+                  </div>
+                  <span className="text-[#666] text-xs">⌘S</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    handleExportJson();
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
+                >
+                  <Download size={18} className="text-[#AAA]" />
+                  <span>Download</span>
+                </button>
+                <div className="h-[1px] bg-[#333] my-2 mx-2" />
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    setIsExportModalOpen(true);
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
+                >
+                  <FileDown size={18} className="text-[#AAA]" />
+                  <span>Export as PDF</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex bg-[#222] rounded p-1 space-x-1">
@@ -117,6 +210,14 @@ export function Toolbar() {
               <Redo2 size={16} />
             </button>
           </div>
+
+          <button
+            onClick={handlePreviewClick}
+            className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors flex items-center gap-2"
+            title="Preview"
+          >
+            <Play size={20} />
+          </button>
 
           {/* Mobile Menu Toggle (now always visible) */}
           <button 
@@ -151,53 +252,6 @@ export function Toolbar() {
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  handleExportJson();
-                }}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-              >
-                <Download size={20} className="stroke-[1.5]" />
-                <span>Save File</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  fileInputRef.current?.click();
-                }}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-              >
-                <Upload size={20} className="stroke-[1.5]" />
-                <span>Import File</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsExportModalOpen(true);
-                }}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left relative"
-              >
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#2DD4BF] opacity-0 hover:opacity-100 transition-opacity"></div>
-                <FileDown size={20} className="stroke-[1.5]" />
-                <span>Export PDF</span>
-              </button>
-
-              <div className="h-[1px] bg-[#333] mx-6 my-4"></div>
-
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handlePreviewClick();
-                }}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-              >
-                <Play size={20} className="stroke-[1.5]" />
-                <span>Preview</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
                   setIsDocActionsModalOpen(true);
                 }}
                 className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
@@ -205,6 +259,19 @@ export function Toolbar() {
                 <Settings size={20} className="stroke-[1.5]" />
                 <span>File Settings</span>
               </button>
+            </div>
+
+            <div className="mt-auto p-6 border-t border-[#1F2228]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
+                <div className="flex flex-col">
+                  <span className="text-white font-bold leading-tight tracking-wide text-[15px]">STORYBOARD</span>
+                  <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMO</span>
+                </div>
+              </div>
+              <p className="text-sm text-[#888] leading-relaxed">
+                A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
+              </p>
             </div>
           </div>
         </div>

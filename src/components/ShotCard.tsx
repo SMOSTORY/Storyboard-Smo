@@ -181,10 +181,20 @@ export function ShotCard({ shot, index }: ShotCardProps) {
         />
       </div>
 
+      {/* Read-only metadata summary */}
+      {!isMetadataExpanded && (shot.metadata.shotType || shot.metadata.focalLength || shot.metadata.cameraMovement || shot.metadata.dialogue) && (
+        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 pt-1.5 border-t border-[#222]">
+          {shot.metadata.shotType && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Type</span>{shot.metadata.shotType}</div>}
+          {shot.metadata.focalLength && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Lens</span>{shot.metadata.focalLength}</div>}
+          {shot.metadata.cameraMovement && <div className="text-[8px] text-[#A1A1AA]"><span className="text-[#555] uppercase font-semibold mr-1">Move</span>{shot.metadata.cameraMovement}</div>}
+          {shot.metadata.dialogue && <div className="text-[8px] text-[#A1A1AA] w-full mt-0.5"><span className="text-[#555] uppercase font-semibold mr-1">Notes</span><span className="italic">{shot.metadata.dialogue}</span></div>}
+        </div>
+      )}
+
       {/* Metadata Toggle */}
       <button 
         onClick={() => setIsMetadataExpanded(!isMetadataExpanded)}
-        className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-0.5 mt-auto uppercase tracking-wider font-semibold hide-in-export"
+        className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold hide-in-export"
       >
         {isMetadataExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
         <span>{isMetadataExpanded ? 'Hide Details' : 'Show Details'}</span>
