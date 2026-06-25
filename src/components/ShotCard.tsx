@@ -103,7 +103,7 @@ export function ShotCard({ shot, index }: ShotCardProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative group/card transition-opacity",
+        "relative group/card",
         isDragging && "opacity-50 z-10"
       )}
     >
@@ -126,14 +126,18 @@ export function ShotCard({ shot, index }: ShotCardProps) {
           {!isMetadataExpanded && (
             <>
               <div 
-                className="absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg opacity-0 group-hover/card:opacity-100 transition-colors hide-in-export"
+                className={cn(
+                  "absolute top-2 right-2 z-20 p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded cursor-grab active:cursor-grabbing shadow-lg hide-in-export transition-opacity opacity-0 group-hover/card:opacity-100"
+                )}
                 {...attributes}
                 {...listeners}
               >
                 <GripVertical size={13} />
               </div>
 
-              <div className="absolute top-9 right-2 z-20 flex flex-col gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity hide-in-export">
+              <div className={cn(
+                "absolute top-9 right-2 z-20 flex flex-col gap-1 hide-in-export transition-opacity opacity-0 group-hover/card:opacity-100"
+              )}>
                 <button 
                   onClick={(e) => { e.stopPropagation(); addShot(index + 1); }}
                   className="p-1.5 bg-[#181818] hover:bg-[#2A2A2A] border border-[#333] hover:border-[#555] text-[#888] hover:text-[#E0E0E0] rounded shadow-lg transition-colors pointer-events-auto"
@@ -164,7 +168,10 @@ export function ShotCard({ shot, index }: ShotCardProps) {
               onBlur={() => saveHistory()}
               onKeyDown={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
-              className="text-[10px] font-semibold opacity-60 italic text-right bg-transparent border-none focus:outline-none focus:opacity-100 text-white placeholder:text-[#666] w-full ml-2"
+              className={cn(
+                "text-[10px] font-semibold opacity-60 italic text-right bg-transparent border-none focus:outline-none focus:opacity-100 text-white focus:placeholder-[#666] w-full ml-2",
+                "placeholder-transparent group-hover/card:placeholder-[#666]"
+              )}
             />
           </div>
 
@@ -216,7 +223,10 @@ export function ShotCard({ shot, index }: ShotCardProps) {
           {/* Metadata Toggle */}
           <button 
             onClick={() => setIsMetadataExpanded(true)}
-            className="flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold hide-in-export"
+            className={cn(
+              "flex items-center justify-center gap-1 text-[9px] text-[#666] hover:text-[#999] py-1 mt-auto uppercase tracking-wider font-semibold hide-in-export",
+              "opacity-0 group-hover/card:opacity-100"
+            )}
           >
             <span>Show Details</span>
             <ChevronRight size={12} />
