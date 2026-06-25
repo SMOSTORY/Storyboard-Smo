@@ -65,7 +65,7 @@ export const createEmptyShot = (): Shot => ({
 
 const defaultState: StoryboardState = {
   projectName: 'Project Name',
-  projectVersion: 'v1.0.0',
+  projectVersion: '26.06.01',
   headerCenter: '',
   headerRight: '',
   footerLeft: '',

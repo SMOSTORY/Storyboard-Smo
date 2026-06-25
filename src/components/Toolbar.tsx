@@ -1,18 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function Toolbar() {
-  const { undo, redo, past, future, clearState, importState, projectName } = useStore();
+  const { undo, redo, past, future, clearState, importState, projectName, projectVersion } = useStore();
   const state = useStore();
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
   const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
+  const [isAppInfoModalOpen, setIsAppInfoModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
@@ -229,44 +231,64 @@ export function Toolbar() {
       />
 
       {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex justify-end"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <div 
-            className="w-[280px] bg-[#0F1115] h-full shadow-2xl border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6 animate-in slide-in-from-right-full duration-200"
-            onClick={(e) => e.stopPropagation()}
-            style={{ fontFamily: "'Pliant', sans-serif" }}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex justify-end"
+            onClick={() => setIsMobileMenuOpen(false)}
           >
-            <div className="flex flex-col py-2">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsDocActionsModalOpen(true);
-                }}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-              >
-                <Settings size={20} className="stroke-[1.5]" />
-                <span>File Settings</span>
-              </button>
-            </div>
-
-            <div className="mt-auto p-6 border-t border-[#1F2228]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
-                <div className="flex flex-col">
-                  <span className="text-white font-bold leading-tight tracking-wide text-[15px]">STORYBOARD</span>
-                  <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMO</span>
-                </div>
+            <motion.div 
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="w-[280px] bg-[#0F1115] h-full shadow-2xl border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6"
+              onClick={(e) => e.stopPropagation()}
+              style={{ fontFamily: "'Pliant', sans-serif" }}
+            >
+              <div className="flex flex-col py-2">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsDocActionsModalOpen(true);
+                  }}
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                >
+                  <Settings size={20} className="stroke-[1.5]" />
+                  <span>File Settings</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAppInfoModalOpen(true);
+                  }}
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                >
+                  <Info size={20} className="stroke-[1.5]" />
+                  <span>App Info</span>
+                </button>
               </div>
-              <p className="text-sm text-[#888] leading-relaxed">
-                A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+
+              <div className="mt-auto p-6 border-t border-[#1F2228]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
+                  <div className="flex flex-col">
+                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">STORYBOARD</span>
+                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMO</span>
+                  </div>
+                </div>
+                <p className="text-sm text-[#888] leading-relaxed">
+                  A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Document Actions Modal */}
       {isDocActionsModalOpen && (
@@ -466,6 +488,52 @@ export function Toolbar() {
               >
                 Clear All Shots
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* App Info Modal */}
+      {isAppInfoModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#333]">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wide">App Info</h2>
+              <button 
+                onClick={() => setIsAppInfoModalOpen(false)}
+                className="text-[#666] hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <div className="p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-xl shadow-inner shrink-0">S</div>
+                <div className="flex flex-col">
+                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">STORYBOARD</span>
+                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMO</span>
+                </div>
+              </div>
+              <p className="text-sm text-[#888] leading-relaxed">
+                A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
+              </p>
+              
+              <div className="mt-2">
+                <a 
+                  href="https://github.com/SMOSTORY/Storyboard-Smo" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors break-all"
+                >
+                  https://github.com/SMOSTORY/Storyboard-Smo
+                </a>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-[#333] flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#666] uppercase tracking-wider">Calendar Versioning</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">{projectVersion || '26.06.01'}</span>
+              </div>
             </div>
           </div>
         </div>

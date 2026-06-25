@@ -36,7 +36,6 @@ export default function App() {
         <div className="flex items-center gap-3 sm:space-x-4">
           <div className="text-[9px] sm:text-[10px] text-[#666] uppercase tracking-tighter">Total Shots: <span className="text-[#AAA] font-bold">{shots.length}</span></div>
           <div className="text-[9px] sm:text-[10px] text-[#666] uppercase tracking-tighter">Est. Runtime: <span className="text-[#AAA] font-bold">{estimatedRuntime}</span></div>
-          <div className="hidden sm:block text-[10px] text-[#666] uppercase tracking-tighter font-mono">Version: <span className="text-[#AAA] font-bold">{projectVersion || 'v1.0.0'}</span></div>
         </div>
         <div className="flex items-center">
            <div className="text-[9px] sm:text-[10px] text-[#555] font-mono uppercase truncate max-w-[150px] sm:max-w-xs">{projectName}</div>
