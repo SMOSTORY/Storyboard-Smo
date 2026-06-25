@@ -10,7 +10,6 @@ import { useStore } from './store';
 
 export default function App() {
   const shots = useStore(state => state.shots);
-  const projectVersion = useStore(state => state.projectVersion);
   const projectName = useStore(state => state.projectName);
   
   const estimatedRuntime = useMemo(() => {

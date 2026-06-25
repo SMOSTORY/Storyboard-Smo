@@ -531,8 +531,8 @@ export function Toolbar() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-[#333] flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#666] uppercase tracking-wider">Calendar Versioning</span>
-                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">{projectVersion || '26.06.01'}</span>
+                <span className="text-xs font-semibold text-[#666] uppercase tracking-wider">APP VERSION</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">26.06.01</span>
               </div>
             </div>
           </div>
