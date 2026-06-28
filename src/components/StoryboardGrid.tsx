@@ -21,6 +21,7 @@ import { Shot } from '../types';
 export function StoryboardGrid() {
   const { 
     shots, 
+    zoomLevel,
     reorderShots, 
     projectName, setProjectName,
     headerCenter, setHeaderCenter,
@@ -69,22 +70,26 @@ export function StoryboardGrid() {
   }, [shots]);
 
   return (
-    <div className="flex flex-col items-center gap-12 py-10 px-4 flex-1 bg-[#181818] overflow-y-auto w-full">
-      <DndContext 
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
+    <div className="flex flex-col items-center py-10 px-4 flex-1 bg-[#181818] overflow-y-auto w-full">
+      <div 
+        className="w-full flex flex-col items-center gap-12"
+        style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}
       >
-        <SortableContext 
-          items={shots.map(s => s.id)}
-          strategy={rectSortingStrategy}
+        <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {pages.map((pageShots, pageIndex) => (
-            <div 
-              key={`page-${pageIndex}`}
-              className="board-page group bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] md:aspect-[1.414] shrink-0 flex flex-col p-4 md:p-6 relative sm:overflow-hidden h-auto md:h-auto gap-4 md:gap-0"
-              // DIN A4 width/height: 297mm x 210mm. Aspect is 1.414.
-            >
+          <SortableContext 
+            items={shots.map(s => s.id)}
+            strategy={rectSortingStrategy}
+          >
+            {pages.map((pageShots, pageIndex) => (
+              <div 
+                key={`page-${pageIndex}`}
+                className="board-page group bg-[#252525] shadow-2xl border border-[#333] w-full max-w-[1122px] md:aspect-[1.414] shrink-0 flex flex-col p-4 md:p-6 relative sm:overflow-hidden h-auto md:h-auto gap-4 md:gap-0"
+                // DIN A4 width/height: 297mm x 210mm. Aspect is 1.414.
+              >
               {/* DELETE PAGE BUTTON */}
               <button
                 onClick={() => setPageToDelete(pageIndex)}
@@ -203,6 +208,7 @@ export function StoryboardGrid() {
       >
         + Add Page
       </button>
+      </div>
 
       {/* Delete Page Modal */}
       {pageToDelete !== null && (

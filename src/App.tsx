@@ -4,13 +4,15 @@
  */
 
 import { useMemo } from 'react';
+import { Minus, Plus, Maximize, LayoutGrid } from 'lucide-react';
 import { Toolbar } from './components/Toolbar';
 import { StoryboardGrid } from './components/StoryboardGrid';
 import { useStore } from './store';
 
 export default function App() {
   const shots = useStore(state => state.shots);
-  const projectName = useStore(state => state.projectName);
+  const zoomLevel = useStore(state => state.zoomLevel);
+  const setZoomLevel = useStore(state => state.setZoomLevel);
   
   const estimatedRuntime = useMemo(() => {
     let totalWords = 0;
@@ -36,8 +38,21 @@ export default function App() {
           <div className="text-[9px] sm:text-[10px] text-[#666] uppercase tracking-tighter">Total Shots: <span className="text-[#AAA] font-bold">{shots.length}</span></div>
           <div className="text-[9px] sm:text-[10px] text-[#666] uppercase tracking-tighter">Est. Runtime: <span className="text-[#AAA] font-bold">{estimatedRuntime}</span></div>
         </div>
-        <div className="flex items-center">
-           <div className="text-[9px] sm:text-[10px] text-[#555] font-mono uppercase truncate max-w-[150px] sm:max-w-xs">{projectName}</div>
+        <div className="flex items-center gap-1">
+           <button onClick={() => setZoomLevel(90)} className="text-[#666] hover:text-white p-1 transition-colors" title="Overview (90%)">
+             <LayoutGrid size={14} />
+           </button>
+           <button onClick={() => setZoomLevel(120)} className="text-[#666] hover:text-white p-1 transition-colors mr-1" title="Full Width (120%)">
+             <Maximize size={14} />
+           </button>
+           <div className="w-[1px] h-4 bg-[#333] mx-1"></div>
+           <button onClick={() => setZoomLevel(Math.max(50, zoomLevel - 10))} className="text-[#666] hover:text-white p-1 transition-colors" title="Zoom Out">
+             <Minus size={14} />
+           </button>
+           <div className="text-[10px] text-[#888] font-mono w-[40px] text-center select-none">{zoomLevel}%</div>
+           <button onClick={() => setZoomLevel(Math.min(200, zoomLevel + 10))} className="text-[#666] hover:text-white p-1 transition-colors" title="Zoom In">
+             <Plus size={14} />
+           </button>
         </div>
       </footer>
     </div>

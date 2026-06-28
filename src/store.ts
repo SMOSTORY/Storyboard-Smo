@@ -26,6 +26,7 @@ export interface StoryboardActions {
   saveHistory: () => void;
   setProjectName: (name: string) => void;
   setProjectVersion: (version: string) => void;
+  setZoomLevel: (zoom: number) => void;
   setHeaderCenter: (text: string) => void;
   setHeaderRight: (text: string) => void;
   setFooterLeft: (text: string) => void;
@@ -66,6 +67,7 @@ export const createEmptyShot = (): Shot => ({
 const defaultState: StoryboardState = {
   projectName: 'Project Name',
   projectVersion: '26.06.01',
+  zoomLevel: 100,
   headerCenter: '',
   headerRight: '',
   footerLeft: '',
@@ -79,6 +81,7 @@ const defaultState: StoryboardState = {
 const extractState = (state: State): StoryboardState => ({
   projectName: state.projectName,
   projectVersion: state.projectVersion,
+  zoomLevel: state.zoomLevel,
   headerCenter: state.headerCenter,
   headerRight: state.headerRight,
   footerLeft: state.footerLeft,
@@ -106,6 +109,7 @@ export const useStore = create<Store>()(
 
       setProjectName: (projectName) => set({ projectName }),
       setProjectVersion: (projectVersion) => set({ projectVersion }),
+      setZoomLevel: (zoomLevel) => set({ zoomLevel }),
       setHeaderCenter: (headerCenter) => set({ headerCenter }),
       setHeaderRight: (headerRight) => set({ headerRight }),
       setFooterLeft: (footerLeft) => set({ footerLeft }),

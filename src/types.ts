@@ -18,6 +18,7 @@ export interface Shot {
 export interface StoryboardState {
   projectName: string;
   projectVersion: string;
+  zoomLevel: number;
   headerCenter: string;
   headerRight: string;
   footerLeft: string;
