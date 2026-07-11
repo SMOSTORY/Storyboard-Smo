@@ -279,7 +279,6 @@ export function Toolbar() {
                   <BookOpen size={20} className="stroke-[1.5]" />
                   <span>Page Layout</span>
                 </button>
-                <div className="h-[1px] bg-[#1F2228] mx-6 my-2"></div>
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
@@ -306,8 +305,8 @@ export function Toolbar() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
                   <div className="flex flex-col">
-                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">STORYBOARD</span>
-                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMO</span>
+                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMOSTORY</span>
+                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">TALES</span>
                   </div>
                 </div>
                 <p className="text-sm text-[#888] leading-relaxed">
@@ -706,8 +705,8 @@ export function Toolbar() {
               <div className="flex items-center gap-4 mb-2">
                 <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-xl shadow-inner shrink-0">S</div>
                 <div className="flex flex-col">
-                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">STORYBOARD</span>
-                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMO</span>
+                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMOSTORY</span>
+                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">TALES</span>
                 </div>
               </div>
               <p className="text-sm text-[#888] leading-relaxed">
