@@ -244,7 +244,7 @@ export function Toolbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex justify-end"
+            className="fixed inset-0 z-[100] flex justify-end"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <motion.div 
@@ -252,7 +252,7 @@ export function Toolbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-[280px] bg-[#0F1115] h-full shadow-2xl border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6"
+              className="w-[280px] bg-[#0F1115] h-full shadow-[-10px_0_30px_rgba(0,0,0,0.5)] border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6"
               onClick={(e) => e.stopPropagation()}
               style={{ fontFamily: "'Pliant', sans-serif" }}
             >
