@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
 import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info, LayoutTemplate, BookOpen, ArrowLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
-import { exportPdf } from '../lib/export';
+import { exportPdf, exportBookPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
 import { PreviewBookMode } from './PreviewBookMode';
 import { motion, AnimatePresence } from 'motion/react';
@@ -164,7 +164,17 @@ export function Toolbar() {
                   className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
                 >
                   <FileDown size={18} className="text-[#AAA]" />
-                  <span>Export Storyboard to PDF</span>
+                  <span>Export Storyboard as PDF</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFileMenuOpen(false);
+                    exportBookPdf(projectName);
+                  }}
+                  className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
+                >
+                  <FileDown size={18} className="text-[#AAA]" />
+                  <span>Export Book as PDF</span>
                 </button>
               </div>
             )}

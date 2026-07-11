@@ -77,3 +77,75 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
     alert(`Export failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
+
+export const exportBookPdf = async (projectName: string) => {
+  try {
+    const elements = Array.from(document.querySelectorAll('.book-page')) as HTMLElement[];
+    if (!elements || elements.length === 0) {
+      alert('No pages found to export. Switch to Book edit view first.');
+      return;
+    }
+
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    elements.forEach(el => el.classList.add('is-exporting'));
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const originalScrollY = window.scrollY;
+    
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      
+      el.scrollIntoView({ behavior: 'instant', block: 'start' });
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      const options = {
+        quality: 0.95,
+        pixelRatio: 2,
+        backgroundColor: '#fdfdfd',
+        filter: (node: any) => {
+          if (node?.classList?.contains('hide-in-export')) {
+            return false;
+          }
+          return true;
+        }
+      };
+      
+      await toJpeg(el, options);
+      const imgData = await toJpeg(el, options);
+      
+      if (i > 0) {
+        pdf.addPage();
+      }
+      
+      const pdfWidth = 297;
+      const pdfHeight = 105; // 594 / 210 ratio is roughly 2.8, so height is width / 2.8. Wait. 
+      // 594 / 210 = 2.828.
+      // A4 is 297 x 210
+      // So height should be 297 / 2.828 = 105mm!
+      
+      // Let's position it vertically centered.
+      const yOffset = (210 - 105) / 2;
+      
+      pdf.addImage(imgData, 'JPEG', 0, yOffset, pdfWidth, 105);
+    }
+
+    elements.forEach(el => {
+      el.classList.remove('is-exporting');
+    });
+
+    window.scrollTo({ top: originalScrollY, behavior: 'instant' });
+
+    const safeProjectName = (projectName || 'Book').trim().replace(/\s+/g, '_');
+    pdf.save(`${safeProjectName}_Book_${format(new Date(), 'yyyy-MM-dd_HHmm')}.pdf`);
+  } catch (error) {
+    const elements = Array.from(document.querySelectorAll('.book-page')) as HTMLElement[];
+    elements.forEach(el => el.classList.remove('is-exporting'));
+    console.error('PDF Export failed:', error);
+    alert(`Export failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};

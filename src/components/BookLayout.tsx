@@ -23,7 +23,7 @@ export function BookLayout() {
           <div key={shot.id} className="relative group flex flex-col items-center">
             {/* The Spread */}
             <div 
-              className="w-[1400px] flex bg-[#fdfdfd] shadow-2xl relative overflow-hidden text-black transition-all"
+              className="book-page w-[1400px] flex bg-[#fdfdfd] shadow-2xl relative overflow-hidden text-black transition-all"
               style={{ aspectRatio: '594 / 210' }}
             >
               
@@ -99,11 +99,11 @@ function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, i
     >
       <input 
         type="text"
-        value={shot.sceneNumber}
+        value={shot.sceneNumber || ''}
         onChange={(e) => updateShot(shot.id, { sceneNumber: e.target.value })}
         onBlur={() => saveHistory()}
         placeholder="Scene Title"
-        className="leading-none text-black font-bold bg-transparent border-none focus:outline-none w-full placeholder:text-black/20"
+        className={`leading-none text-black font-bold bg-transparent border-none focus:outline-none w-full ${!shot.sceneNumber ? 'hidden group-hover:block focus:block placeholder:text-black/20' : ''}`}
         style={{
           fontFamily: `'${settings.headlineFont}', serif`,
           fontSize: `${settings.headlineSize}px`,
