@@ -11,7 +11,6 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        devOptions: { enabled: true },
         manifest: {
           name: 'Storyboard Creator',
           short_name: 'Storyboarder',

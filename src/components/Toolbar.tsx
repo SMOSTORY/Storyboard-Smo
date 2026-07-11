@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info, LayoutTemplate, BookOpen } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info, LayoutTemplate, BookOpen, ArrowLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
@@ -13,13 +13,10 @@ export function Toolbar() {
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
-  const [isDocActionsModalOpen, setIsDocActionsModalOpen] = useState(false);
-  const [isEditorSettingsModalOpen, setIsEditorSettingsModalOpen] = useState(false);
-  const [isBookSettingsModalOpen, setIsBookSettingsModalOpen] = useState(false);
-  const [isAppInfoModalOpen, setIsAppInfoModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPreviewBookOpen, setIsPreviewBookOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'main' | 'settings' | 'storyboard-settings' | 'book-settings' | 'app-info'>('main');
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [previewStartIndex, setPreviewStartIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +81,6 @@ export function Toolbar() {
     a.download = `${projectName.replace(/\s+/g, '_')}_${format(new Date(), 'yyyy-MM-dd_HHmm')}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setIsDocActionsModalOpen(false);
   };
 
   const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +101,6 @@ export function Toolbar() {
     };
     reader.readAsText(file);
     e.target.value = '';
-    setIsDocActionsModalOpen(false);
   };
 
   const handleExportPdf = async (lightMode: boolean) => {
@@ -169,7 +164,7 @@ export function Toolbar() {
                   className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
                 >
                   <FileDown size={18} className="text-[#AAA]" />
-                  <span>Export as PDF</span>
+                  <span>Export Storyboard to PDF</span>
                 </button>
               </div>
             )}
@@ -222,7 +217,10 @@ export function Toolbar() {
 
           {/* Mobile Menu Toggle (now always visible) */}
           <button 
-            onClick={() => setIsMobileMenuOpen(true)}
+            onClick={() => {
+              setSidebarView('main');
+              setIsMobileMenuOpen(true);
+            }}
             className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
           >
             <Menu size={20} />
@@ -258,355 +256,324 @@ export function Toolbar() {
               onClick={(e) => e.stopPropagation()}
               style={{ fontFamily: "'Pliant', sans-serif" }}
             >
-              <div className="flex flex-col py-2">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    state.setCurrentView('storyboard');
-                  }}
-                  className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'storyboard' ? 'text-white bg-[#1A1D24]' : ''}`}
-                >
-                  <LayoutTemplate size={20} className="stroke-[1.5]" />
-                  <span>Storyboard</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    state.setCurrentView('book');
-                  }}
-                  className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'book' ? 'text-white bg-[#1A1D24]' : ''}`}
-                >
-                  <BookOpen size={20} className="stroke-[1.5]" />
-                  <span>Page Layout</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setIsDocActionsModalOpen(true);
-                  }}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-                >
-                  <Settings size={20} className="stroke-[1.5]" />
-                  <span>Settings</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setIsAppInfoModalOpen(true);
-                  }}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
-                >
-                  <Info size={20} className="stroke-[1.5]" />
-                  <span>App Info</span>
-                </button>
-              </div>
+              {sidebarView === 'main' && (
+                <>
+                  <div className="flex flex-col py-2">
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        state.setCurrentView('storyboard');
+                      }}
+                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'storyboard' ? 'text-white bg-[#1A1D24]' : ''}`}
+                    >
+                      <LayoutTemplate size={20} className="stroke-[1.5]" />
+                      <span>Storyboard</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        state.setCurrentView('book');
+                      }}
+                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'book' ? 'text-white bg-[#1A1D24]' : ''}`}
+                    >
+                      <BookOpen size={20} className="stroke-[1.5]" />
+                      <span>Book edit</span>
+                    </button>
+                    <button
+                      onClick={() => setSidebarView('settings')}
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                    >
+                      <Settings size={20} className="stroke-[1.5]" />
+                      <span>Settings</span>
+                    </button>
+                    <button
+                      onClick={() => setSidebarView('app-info')}
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                    >
+                      <Info size={20} className="stroke-[1.5]" />
+                      <span>App Info</span>
+                    </button>
+                  </div>
 
-              <div className="mt-auto p-6 border-t border-[#1F2228]">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
-                  <div className="flex flex-col">
-                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMOSTORY</span>
-                    <span className="text-white font-bold leading-tight tracking-wide text-[15px]">TALES</span>
+                  <div className="mt-auto p-6 border-t border-[#1F2228]">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
+                      <div className="flex flex-col">
+                        <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMOSTORY</span>
+                        <span className="text-white font-bold leading-tight tracking-wide text-[15px]">TALES</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-[#888] leading-relaxed">
+                      A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {sidebarView === 'settings' && (
+                <>
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-[#1F2228]">
+                    <button onClick={() => setSidebarView('main')} className="p-1 hover:bg-[#1A1D24] rounded-md transition-colors text-white">
+                      <ArrowLeft size={20} />
+                    </button>
+                    <h2 className="text-[17px] font-semibold text-white tracking-wide">Settings</h2>
+                  </div>
+                  <div className="flex flex-col py-2">
+                    <button
+                      onClick={() => setSidebarView('storyboard-settings')}
+                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Type size={20} className="stroke-[1.5]" />
+                        <span>Storyboard Settings</span>
+                      </div>
+                      <ChevronRight size={20} className="text-[#666]" />
+                    </button>
+                    <button
+                      onClick={() => setSidebarView('book-settings')}
+                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Settings2 size={20} className="stroke-[1.5]" />
+                        <span>Book Settings</span>
+                      </div>
+                      <ChevronRight size={20} className="text-[#666]" />
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {sidebarView === 'app-info' && (
+                <>
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-[#1F2228]">
+                    <button onClick={() => setSidebarView('main')} className="p-1 hover:bg-[#1A1D24] rounded-md transition-colors text-white">
+                      <ArrowLeft size={20} />
+                    </button>
+                    <h2 className="text-[17px] font-semibold text-white tracking-wide">App Info</h2>
+                  </div>
+                  <div className="p-6 flex flex-col gap-4">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-xl shadow-inner shrink-0">S</div>
+                      <div className="flex flex-col">
+                        <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMOSTORY</span>
+                        <span className="text-white font-bold leading-tight tracking-wide text-[16px]">TALES</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-[#888] leading-relaxed">
+                      A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
+                    </p>
+                    
+                    <div className="mt-2">
+                      <a 
+                        href="https://github.com/SMOSTORY/Storyboard-Smo" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-400 hover:text-blue-300 transition-colors break-all"
+                      >
+                        https://github.com/SMOSTORY/Storyboard-Smo
+                      </a>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-[#1F2228] flex items-center justify-between">
+                      <span className="text-xs font-semibold text-[#666] uppercase tracking-wider">APP VERSION</span>
+                      <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">{projectVersion}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {sidebarView === 'storyboard-settings' && (
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-[#1F2228] shrink-0">
+                    <button onClick={() => setSidebarView('settings')} className="p-1 hover:bg-[#1A1D24] rounded-md transition-colors text-white">
+                      <ArrowLeft size={20} />
+                    </button>
+                    <h2 className="text-[17px] font-semibold text-white tracking-wide">Storyboard Settings</h2>
+                  </div>
+                  <div className="p-6 flex flex-col gap-6 overflow-y-auto">
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-semibold text-white">Font Family</label>
+                      <select
+                        value={state.globalFontFamily || 'Roboto'}
+                        onChange={(e) => state.setGlobalFontFamily(e.target.value)}
+                        className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="Roboto">Roboto</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="Lato">Lato</option>
+                        <option value="Montserrat">Montserrat</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-semibold text-white">Font Size</label>
+                      <select
+                        value={state.globalFontSize || '11px'}
+                        onChange={(e) => state.setGlobalFontSize(e.target.value)}
+                        className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="9px">9px (Small)</option>
+                        <option value="10px">10px (Normal)</option>
+                        <option value="11px">11px (Default)</option>
+                        <option value="12px">12px (Large)</option>
+                        <option value="13px">13px (Extra Large)</option>
+                        <option value="14px">14px (Huge)</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-semibold text-white">Text Color</label>
+                      <div className="flex items-center gap-3 bg-[#222] border border-[#555] rounded px-3 py-1.5 focus-within:border-[#777] transition-colors">
+                        <input
+                          type="color"
+                          value={state.globalTextColor || '#bbbbbb'}
+                          onChange={(e) => state.setGlobalTextColor(e.target.value)}
+                          className="w-8 h-8 p-0 border-0 rounded cursor-pointer bg-transparent shrink-0"
+                        />
+                        <span className="text-sm text-[#E0E0E0] font-mono uppercase">{state.globalTextColor || '#BBBBBB'}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <p className="text-sm text-[#888] leading-relaxed">
-                  A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
-                </p>
-              </div>
+              )}
+
+              {sidebarView === 'book-settings' && (
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-3 px-6 py-4 border-b border-[#1F2228] shrink-0">
+                    <button onClick={() => setSidebarView('settings')} className="p-1 hover:bg-[#1A1D24] rounded-md transition-colors text-white">
+                      <ArrowLeft size={20} />
+                    </button>
+                    <h2 className="text-[17px] font-semibold text-white tracking-wide">Book Settings</h2>
+                  </div>
+                  
+                  <div className="p-6 flex flex-col gap-6 overflow-y-auto">
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-semibold text-white">Headline Font</label>
+                      <select
+                        value={state.bookSettings.headlineFont}
+                        onChange={(e) => state.setBookSettings({ headlineFont: e.target.value })}
+                        className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666]"
+                      >
+                        <option value="Uncial Antiqua">Uncial Antiqua</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Caudex">Caudex</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-semibold text-white">Body Font</label>
+                      <select
+                        value={state.bookSettings.bodyFont}
+                        onChange={(e) => state.setBookSettings({ bodyFont: e.target.value })}
+                        className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666]"
+                      >
+                        <option value="Caudex">Caudex</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Uncial Antiqua">Uncial Antiqua</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Headline Size</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.headlineSize}px</span>
+                      </label>
+                      <input
+                        type="range" min="16" max="72"
+                        value={state.bookSettings.headlineSize}
+                        onChange={(e) => state.setBookSettings({ headlineSize: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Body Size</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.bodySize}px</span>
+                      </label>
+                      <input
+                        type="range" min="10" max="36"
+                        value={state.bookSettings.bodySize}
+                        onChange={(e) => state.setBookSettings({ bodySize: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Top Padding</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.paddingTop}px</span>
+                      </label>
+                      <input
+                        type="range" min="0" max="160"
+                        value={state.bookSettings.paddingTop}
+                        onChange={(e) => state.setBookSettings({ paddingTop: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Bottom Padding</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.paddingBottom}px</span>
+                      </label>
+                      <input
+                        type="range" min="0" max="160"
+                        value={state.bookSettings.paddingBottom}
+                        onChange={(e) => state.setBookSettings({ paddingBottom: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Padding (Center)</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.textPaddingCenterPercent}%</span>
+                      </label>
+                      <input
+                        type="range" min="0" max="50"
+                        value={state.bookSettings.textPaddingCenterPercent}
+                        onChange={(e) => state.setBookSettings({ textPaddingCenterPercent: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Padding (Edge)</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.textPaddingEdgePercent}%</span>
+                      </label>
+                      <input
+                        type="range" min="0" max="50"
+                        value={state.bookSettings.textPaddingEdgePercent}
+                        onChange={(e) => state.setBookSettings({ textPaddingEdgePercent: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-white flex justify-between">
+                        <span>Headline Margin Bottom</span>
+                        <span className="text-[#888] font-mono">{state.bookSettings.headlineMargin}px</span>
+                      </label>
+                      <input
+                        type="range" min="0" max="100"
+                        value={state.bookSettings.headlineMargin}
+                        onChange={(e) => state.setBookSettings({ headlineMargin: Number(e.target.value) })}
+                        className="w-full accent-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Document Actions Modal */}
-      {isDocActionsModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[#333]">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Settings</h2>
-              <button 
-                onClick={() => setIsDocActionsModalOpen(false)}
-                className="text-[#666] hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            
-            <div className="p-2">
-              <button
-                onClick={() => {
-                  setIsDocActionsModalOpen(false);
-                  setIsEditorSettingsModalOpen(true);
-                }}
-                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
-                  <Type size={16} className="text-[#E0E0E0]" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-white mb-0.5">Editor Settings</div>
-                  <div className="text-xs text-[#999]">Change font family, size and color</div>
-                </div>
-              </button>
 
-              <div className="h-[1px] bg-[#333] mx-2 my-1"></div>
-              
-              <button
-                onClick={() => {
-                  setIsDocActionsModalOpen(false);
-                  setIsBookSettingsModalOpen(true);
-                }}
-                className="w-full text-left p-3 hover:bg-[#222] rounded flex items-start gap-3 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded bg-[#2A2A2A] group-hover:bg-[#333] flex items-center justify-center shrink-0 transition-colors">
-                  <BookOpen size={16} className="text-[#E0E0E0]" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-white mb-0.5">Book Settings</div>
-                  <div className="text-xs text-[#999]">Change page layout typography & spacing</div>
-                </div>
-              </button>
-
-              <div className="h-[1px] bg-[#333] mx-2 my-1"></div>
-
-              <button
-                onClick={() => {
-                  setIsDocActionsModalOpen(false);
-                  setIsClearModalOpen(true);
-                }}
-                className="w-full text-left p-3 hover:bg-red-500/10 rounded flex items-start gap-3 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded bg-red-500/10 group-hover:bg-red-500/20 flex items-center justify-center shrink-0 transition-colors">
-                  <Trash2 size={16} className="text-red-400 group-hover:text-red-300" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold text-red-400 group-hover:text-red-300 mb-0.5">Clear Board</div>
-                  <div className="text-xs text-red-400/70 group-hover:text-red-400/90">Wipe all shots and text</div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Editor Settings Modal */}
-      {isEditorSettingsModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[#333]">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Editor Settings</h2>
-              <button 
-                onClick={() => setIsEditorSettingsModalOpen(false)}
-                className="text-[#666] hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            
-            <div className="p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white">Font Family</label>
-                <select
-                  value={state.globalFontFamily || 'Roboto'}
-                  onChange={(e) => state.setGlobalFontFamily(e.target.value)}
-                  className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
-                >
-                  <option value="Roboto">Roboto</option>
-                  <option value="Inter">Inter</option>
-                  <option value="Open Sans">Open Sans</option>
-                  <option value="Lato">Lato</option>
-                  <option value="Montserrat">Montserrat</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white">Font Size</label>
-                <select
-                  value={state.globalFontSize || '11px'}
-                  onChange={(e) => state.setGlobalFontSize(e.target.value)}
-                  className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666] transition-colors appearance-none cursor-pointer"
-                >
-                  <option value="9px">9px (Small)</option>
-                  <option value="10px">10px (Normal)</option>
-                  <option value="11px">11px (Default)</option>
-                  <option value="12px">12px (Large)</option>
-                  <option value="13px">13px (Extra Large)</option>
-                  <option value="14px">14px (Huge)</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white">Text Color</label>
-                <div className="flex items-center gap-3 bg-[#222] border border-[#555] rounded px-3 py-1.5 focus-within:border-[#777] transition-colors">
-                  <input
-                    type="color"
-                    value={state.globalTextColor || '#bbbbbb'}
-                    onChange={(e) => state.setGlobalTextColor(e.target.value)}
-                    className="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent shrink-0"
-                  />
-                  <span className="text-sm text-[#E0E0E0] font-mono uppercase">{state.globalTextColor || '#BBBBBB'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-[#333] flex justify-end">
-              <button
-                onClick={() => setIsEditorSettingsModalOpen(false)}
-                className="px-4 py-2 bg-[#222] hover:bg-[#333] rounded text-sm font-semibold text-white transition-colors border border-[#444]"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Book Settings Modal */}
-      {isBookSettingsModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-md flex flex-col overflow-hidden max-h-[90vh]">
-            <div className="flex items-center justify-between p-4 border-b border-[#333]">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide">Book Settings</h2>
-              <button 
-                onClick={() => setIsBookSettingsModalOpen(false)}
-                className="text-[#666] hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            
-            <div className="p-4 flex flex-col gap-6 overflow-y-auto">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-white">Headline Font</label>
-                  <select
-                    value={state.bookSettings.headlineFont}
-                    onChange={(e) => state.setBookSettings({ headlineFont: e.target.value })}
-                    className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666]"
-                  >
-                    <option value="Uncial Antiqua">Uncial Antiqua</option>
-                    <option value="Roboto">Roboto</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Caudex">Caudex</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-white">Body Font</label>
-                  <select
-                    value={state.bookSettings.bodyFont}
-                    onChange={(e) => state.setBookSettings({ bodyFont: e.target.value })}
-                    className="bg-[#222] border border-[#555] rounded px-3 py-2 text-sm text-[#E0E0E0] outline-none hover:border-[#666]"
-                  >
-                    <option value="Caudex">Caudex</option>
-                    <option value="Roboto">Roboto</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Uncial Antiqua">Uncial Antiqua</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Headline Size</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.headlineSize}px</span>
-                </label>
-                <input
-                  type="range" min="16" max="72"
-                  value={state.bookSettings.headlineSize}
-                  onChange={(e) => state.setBookSettings({ headlineSize: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Body Size</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.bodySize}px</span>
-                </label>
-                <input
-                  type="range" min="10" max="36"
-                  value={state.bookSettings.bodySize}
-                  onChange={(e) => state.setBookSettings({ bodySize: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Top Padding</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.paddingTop}px</span>
-                </label>
-                <input
-                  type="range" min="0" max="160"
-                  value={state.bookSettings.paddingTop}
-                  onChange={(e) => state.setBookSettings({ paddingTop: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Bottom Padding</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.paddingBottom}px</span>
-                </label>
-                <input
-                  type="range" min="0" max="160"
-                  value={state.bookSettings.paddingBottom}
-                  onChange={(e) => state.setBookSettings({ paddingBottom: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Text Padding (to center) (%)</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.textPaddingCenterPercent}%</span>
-                </label>
-                <input
-                  type="range" min="0" max="50"
-                  value={state.bookSettings.textPaddingCenterPercent}
-                  onChange={(e) => state.setBookSettings({ textPaddingCenterPercent: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Text Padding (to edge) (%)</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.textPaddingEdgePercent}%</span>
-                </label>
-                <input
-                  type="range" min="0" max="50"
-                  value={state.bookSettings.textPaddingEdgePercent}
-                  onChange={(e) => state.setBookSettings({ textPaddingEdgePercent: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-white flex justify-between">
-                  <span>Headline Margin Bottom</span>
-                  <span className="text-[#888] font-mono">{state.bookSettings.headlineMargin}px</span>
-                </label>
-                <input
-                  type="range" min="0" max="100"
-                  value={state.bookSettings.headlineMargin}
-                  onChange={(e) => state.setBookSettings({ headlineMargin: Number(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-[#333] flex justify-end shrink-0">
-              <button
-                onClick={() => setIsBookSettingsModalOpen(false)}
-                className="px-4 py-2 bg-[#222] hover:bg-[#333] rounded text-sm font-semibold text-white transition-colors border border-[#444]"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {isExportModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -687,51 +654,7 @@ export function Toolbar() {
         </div>
       )}
 
-      {/* App Info Modal */}
-      {isAppInfoModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl w-full max-w-sm flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[#333]">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide">App Info</h2>
-              <button 
-                onClick={() => setIsAppInfoModalOpen(false)}
-                className="text-[#666] hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            
-            <div className="p-6 flex flex-col gap-4">
-              <div className="flex items-center gap-4 mb-2">
-                <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-xl shadow-inner shrink-0">S</div>
-                <div className="flex flex-col">
-                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMOSTORY</span>
-                  <span className="text-white font-bold leading-tight tracking-wide text-[16px]">TALES</span>
-                </div>
-              </div>
-              <p className="text-sm text-[#888] leading-relaxed">
-                A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
-              </p>
-              
-              <div className="mt-2">
-                <a 
-                  href="https://github.com/SMOSTORY/Storyboard-Smo" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors break-all"
-                >
-                  https://github.com/SMOSTORY/Storyboard-Smo
-                </a>
-              </div>
 
-              <div className="mt-4 pt-4 border-t border-[#333] flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#666] uppercase tracking-wider">APP VERSION</span>
-                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">26.06.01</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {isPreviewOpen && (
         <PreviewMode onClose={() => setIsPreviewOpen(false)} initialIndex={previewStartIndex} />
