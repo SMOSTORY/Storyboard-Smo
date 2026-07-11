@@ -85,8 +85,7 @@ function ImagePanel({ shot }: { shot: any }) {
 }
 
 function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, isLeftPage: boolean }) {
-  // Extract a headline if we have scene details or use scene number
-  const headline = shot.sceneNumber ? `Scene ${shot.sceneNumber}` : 'Untitled Scene';
+  const { updateShot, saveHistory } = useStore();
 
   return (
     <div 
@@ -98,26 +97,48 @@ function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, i
         paddingRight: isLeftPage ? `${settings.textPaddingCenterPercent}%` : `${settings.textPaddingEdgePercent}%`,
       }}
     >
-      <h2 
-        className="leading-none text-black font-bold"
+      <input 
+        type="text"
+        value={shot.sceneNumber}
+        onChange={(e) => updateShot(shot.id, { sceneNumber: e.target.value })}
+        onBlur={() => saveHistory()}
+        placeholder="Scene Title"
+        className="leading-none text-black font-bold bg-transparent border-none focus:outline-none w-full placeholder:text-black/20"
         style={{
           fontFamily: `'${settings.headlineFont}', serif`,
           fontSize: `${settings.headlineSize}px`,
           marginBottom: `${settings.headlineMargin}px`,
         }}
-      >
-        {headline}
-      </h2>
-
-      <div 
-        className="flex-1 text-[#222]"
-        style={{
-          fontFamily: `'${settings.bodyFont}', serif`,
-          fontSize: `${settings.bodySize}px`,
-          lineHeight: 1.6,
-        }}
-        dangerouslySetInnerHTML={{ __html: shot.description || '<i>*No description provided for this scene.*</i>' }}
       />
+
+      <div className="flex-1 relative group/editor">
+        {(!shot.description || shot.description === '<br>' || shot.description === '<div><br></div>' || shot.description.trim() === '') && (
+          <div className="absolute inset-0 pointer-events-none text-black/20 italic opacity-50 group-hover/editor:opacity-100 transition-opacity"
+            style={{
+              fontFamily: `'${settings.bodyFont}', serif`,
+              fontSize: `${settings.bodySize}px`,
+              lineHeight: 1.6,
+            }}
+          >
+            Click to type description...
+          </div>
+        )}
+        <div 
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => {
+            updateShot(shot.id, { description: e.currentTarget.innerHTML });
+            saveHistory();
+          }}
+          className="w-full h-full text-[#222] focus:outline-none"
+          style={{
+            fontFamily: `'${settings.bodyFont}', serif`,
+            fontSize: `${settings.bodySize}px`,
+            lineHeight: 1.6,
+          }}
+          dangerouslySetInnerHTML={{ __html: shot.description }}
+        />
+      </div>
     </div>
   );
 }
