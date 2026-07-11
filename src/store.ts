@@ -35,6 +35,10 @@ export interface StoryboardActions {
   setGlobalTextColor: (color: string) => void;
   setGlobalFontSize: (size: string) => void;
   
+  setCurrentView: (view: import('./types').ViewMode) => void;
+  setBookSettings: (settings: Partial<import('./types').BookSettings>) => void;
+  setBookLayout: (shotId: string, layout: 'image-left' | 'text-left') => void;
+
   addShot: (index: number) => void;
   addPage: () => void;
   deletePage: (pageIndex: number) => void;
@@ -76,6 +80,19 @@ const defaultState: StoryboardState = {
   globalTextColor: '#BBBBBB',
   globalFontSize: '11px',
   shots: Array.from({ length: 8 }).map(createEmptyShot),
+  currentView: 'storyboard',
+  bookSettings: {
+    headlineFont: 'Uncial Antiqua',
+    bodyFont: 'Caudex',
+    paddingTop: 90,
+    paddingBottom: 40,
+    textPaddingCenterPercent: 5,
+    textPaddingEdgePercent: 5,
+    headlineMargin: 20,
+    headlineSize: 32,
+    bodySize: 16,
+  },
+  bookLayouts: {},
 };
 
 const extractState = (state: State): StoryboardState => ({
@@ -90,6 +107,9 @@ const extractState = (state: State): StoryboardState => ({
   globalTextColor: state.globalTextColor,
   globalFontSize: state.globalFontSize,
   shots: state.shots,
+  currentView: state.currentView,
+  bookSettings: state.bookSettings,
+  bookLayouts: state.bookLayouts,
 });
 
 export const useStore = create<Store>()(
@@ -117,6 +137,10 @@ export const useStore = create<Store>()(
       setGlobalFontFamily: (globalFontFamily) => set({ globalFontFamily }),
       setGlobalTextColor: (globalTextColor) => set({ globalTextColor }),
       setGlobalFontSize: (globalFontSize) => set({ globalFontSize }),
+      
+      setCurrentView: (currentView) => set({ currentView }),
+      setBookSettings: (settings) => set((state) => ({ bookSettings: { ...state.bookSettings, ...settings } })),
+      setBookLayout: (shotId, layout) => set((state) => ({ bookLayouts: { ...state.bookLayouts, [shotId]: layout } })),
 
       addShot: (index) => {
         get().saveHistory();

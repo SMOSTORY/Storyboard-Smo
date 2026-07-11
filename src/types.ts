@@ -15,6 +15,20 @@ export interface Shot {
   metadata: ShotMetadata;
 }
 
+export interface BookSettings {
+  headlineFont: string;
+  bodyFont: string;
+  paddingTop: number;
+  paddingBottom: number;
+  textPaddingCenterPercent: number;
+  textPaddingEdgePercent: number;
+  headlineMargin: number;
+  headlineSize: number;
+  bodySize: number;
+}
+
+export type ViewMode = 'storyboard' | 'book';
+
 export interface StoryboardState {
   projectName: string;
   projectVersion: string;
@@ -27,4 +41,7 @@ export interface StoryboardState {
   globalTextColor: string;
   globalFontSize: string;
   shots: Shot[];
+  currentView: ViewMode;
+  bookSettings: BookSettings;
+  bookLayouts: Record<string, 'image-left' | 'text-left'>;
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from '../store';
 import { ShotCard } from './ShotCard';
 import { Trash2, AlertTriangle } from 'lucide-react';
