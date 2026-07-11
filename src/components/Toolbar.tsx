@@ -117,17 +117,6 @@ export function Toolbar() {
     <>
       <header className="flex items-center justify-between px-4 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
         <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-7 h-7 bg-[#333] rounded flex items-center justify-center font-medium text-[#AAA] text-[11px] shrink-0">S</div>
-            <h1 className="text-[9px] font-black tracking-widest text-[#777] uppercase flex items-center mt-0.5 leading-[1.1]">
-              <span className="flex flex-col text-left">
-                <span>Story</span>
-                <span>board</span>
-                <span>SMO</span>
-              </span>
-            </h1>
-          </div>
-
           <div className="relative" ref={fileMenuRef}>
             <button 
               onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
