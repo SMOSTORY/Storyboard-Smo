@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
-import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info, LayoutTemplate, BookOpen, ArrowLeft, ChevronRight } from 'lucide-react';
+import { Undo2, Redo2, Trash2, Download, Upload, FileDown, Moon, Sun, AlertTriangle, Settings, Settings2, X, Type, Play, Menu, File, Plus, Info, LayoutTemplate, BookOpen, ArrowLeft, ChevronRight, Keyboard } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportPdf, exportBookPdf } from '../lib/export';
 import { PreviewMode } from './PreviewMode';
@@ -19,29 +19,9 @@ export function Toolbar() {
   const [sidebarView, setSidebarView] = useState<'main' | 'settings' | 'storyboard-settings' | 'book-settings' | 'app-info'>('main');
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [previewStartIndex, setPreviewStartIndex] = useState(0);
+  const [isShortcutModalOpen, setIsShortcutModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (fileMenuRef.current && !fileMenuRef.current.contains(event.target as Node)) {
-        setIsFileMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-        e.preventDefault();
-        handleExportJson();
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [state]);
 
   const handlePreviewClick = () => {
     const pages = document.querySelectorAll('.board-page');
@@ -82,6 +62,57 @@ export function Toolbar() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (fileMenuRef.current && !fileMenuRef.current.contains(event.target as Node)) {
+        setIsFileMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleExportJson();
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        state.setCurrentView(state.currentView === 'storyboard' ? 'book' : 'storyboard');
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        if (state.currentView === 'storyboard') {
+          handlePreviewClick();
+        } else {
+          setIsPreviewBookOpen(true);
+        }
+      }
+
+      if (!isInput && e.key === '?') {
+        e.preventDefault();
+        setIsShortcutModalOpen(true);
+      }
+
+      if (e.key === 'Escape') {
+        setIsShortcutModalOpen(false);
+        setIsExportModalOpen(false);
+        setIsClearModalOpen(false);
+        setIsPreviewOpen(false);
+        setIsPreviewBookOpen(false);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [state, handleExportJson, handlePreviewClick]);
 
   const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -304,18 +335,14 @@ export function Toolbar() {
                       <span>App Info</span>
                     </button>
                   </div>
-
-                  <div className="mt-auto p-6 border-t border-[#1F2228]">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-lg shadow-inner">S</div>
-                      <div className="flex flex-col">
-                        <span className="text-white font-bold leading-tight tracking-wide text-[15px]">SMOSTORY</span>
-                        <span className="text-white font-bold leading-tight tracking-wide text-[15px]">TALES</span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-[#888] leading-relaxed">
-                      A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
-                    </p>
+                  <div className="mt-auto flex flex-col py-2 border-t border-[#1F2228]">
+                    <button
+                      onClick={() => setIsShortcutModalOpen(true)}
+                      className="flex items-center gap-3 px-6 py-4 hover:bg-[#1A1D24] hover:text-white transition-colors w-full text-left"
+                    >
+                      <Keyboard size={18} className="stroke-[1.5]" />
+                      <span className="text-[11px] font-semibold tracking-wider uppercase">Keyboard Shortcuts</span>
+                    </button>
                   </div>
                 </>
               )}
@@ -362,16 +389,6 @@ export function Toolbar() {
                     <h2 className="text-[17px] font-semibold text-white tracking-wide">App Info</h2>
                   </div>
                   <div className="p-6 flex flex-col gap-4">
-                    <div className="flex items-center gap-4 mb-2">
-                      <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center font-black text-white text-xl shadow-inner shrink-0">S</div>
-                      <div className="flex flex-col">
-                        <span className="text-white font-bold leading-tight tracking-wide text-[16px]">SMOSTORY</span>
-                        <span className="text-white font-bold leading-tight tracking-wide text-[16px]">TALES</span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-[#888] leading-relaxed">
-                      A modern, offline-first storyboard creator. Design shots, organize scenes, and export directly to PDF.
-                    </p>
                     
                     <div className="mt-2">
                       <a 
@@ -658,6 +675,51 @@ export function Toolbar() {
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-sm text-white font-semibold transition-colors"
               >
                 Clear All Shots
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Modal */}
+      {isShortcutModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsShortcutModalOpen(false)}>
+          <div className="bg-[#181818] border border-[#333] rounded-lg shadow-2xl p-6 w-full max-w-md flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Keyboard size={20} />
+                Keyboard Shortcuts
+              </h2>
+              <button onClick={() => setIsShortcutModalOpen(false)} className="text-[#666] hover:text-white transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#E0E0E0]">Save & Download Project</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">⌘S / Ctrl+S</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#E0E0E0]">Toggle View (Storyboard / Book)</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Alt+V</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#E0E0E0]">Preview Current View</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Alt+P</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#E0E0E0]">Show Keyboard Shortcuts</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">?</span>
+              </div>
+            </div>
+            
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={() => setIsShortcutModalOpen(false)}
+                className="px-4 py-2 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-sm text-white transition-colors"
+              >
+                Close
               </button>
             </div>
           </div>
