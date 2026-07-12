@@ -20,6 +20,14 @@ export function Toolbar() {
   const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
   const [previewStartIndex, setPreviewStartIndex] = useState(0);
   const [isShortcutModalOpen, setIsShortcutModalOpen] = useState(false);
+  const [showOnboardingTooltip, setShowOnboardingTooltip] = useState(() => {
+    return localStorage.getItem('smostory_onboarding_dismissed') !== 'true';
+  });
+
+  const dismissOnboarding = () => {
+    localStorage.setItem('smostory_onboarding_dismissed', 'true');
+    setShowOnboardingTooltip(false);
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -83,12 +91,12 @@ export function Toolbar() {
         handleExportJson();
       }
 
-      if (e.altKey && e.key.toLowerCase() === 'v') {
+      if (e.ctrlKey && e.key.toLowerCase() === 'v') {
         e.preventDefault();
         state.setCurrentView(state.currentView === 'storyboard' ? 'book' : 'storyboard');
       }
 
-      if (e.altKey && e.key.toLowerCase() === 'p') {
+      if (e.ctrlKey && e.key.toLowerCase() === 'p') {
         e.preventDefault();
         if (state.currentView === 'storyboard') {
           handlePreviewClick();
@@ -257,15 +265,32 @@ export function Toolbar() {
           </div>
 
           {/* Mobile Menu Toggle (now always visible) */}
-          <button 
-            onClick={() => {
-              setSidebarView('main');
-              setIsMobileMenuOpen(true);
-            }}
-            className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
-          >
-            <Menu size={20} />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setSidebarView('main');
+                setIsMobileMenuOpen(true);
+              }}
+              className="p-2 text-[#E0E0E0] hover:bg-[#222] hover:text-white rounded transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+            {showOnboardingTooltip && (
+              <div className="absolute top-[calc(100%+14px)] right-0 w-[280px] bg-[#181818] border border-[#2A2A2A] rounded-lg shadow-2xl p-5 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute -top-[7px] right-[10px] w-3.5 h-3.5 bg-[#181818] border-t border-l border-[#2A2A2A] rotate-45"></div>
+                <h3 className="text-[#E0E0E0] font-medium mb-3 relative z-10 text-[15px]">Switch views here</h3>
+                <p className="text-[#999] text-[13px] leading-relaxed mb-5 relative z-10 font-normal">
+                  Switch to the Book Layout to edit text styles, or export your work to PDF.
+                </p>
+                <button
+                  onClick={dismissOnboarding}
+                  className="w-full py-2.5 bg-[#2A2A2A] hover:bg-[#333] border border-[#3A3A3A] text-white text-[13px] font-medium rounded transition-colors relative z-10"
+                >
+                  Ok, thanks
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -702,11 +727,11 @@ export function Toolbar() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[#E0E0E0]">Toggle View (Storyboard / Book)</span>
-                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Alt+V</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Ctrl+V</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[#E0E0E0]">Preview Current View</span>
-                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Alt+P</span>
+                <span className="text-xs font-mono bg-[#222] text-[#AAA] px-2 py-1 rounded">Ctrl+P</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[#E0E0E0]">Show Keyboard Shortcuts</span>
