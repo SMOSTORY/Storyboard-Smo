@@ -70,22 +70,109 @@ export function BookLayout() {
 }
 
 function ImagePanel({ shot }: { shot: any }) {
+  const { updateShot, saveHistory } = useStore();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const processImageFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new globalThis.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        updateShot(shot.id, { image: dataUrl });
+        saveHistory();
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processImageFile(file);
+    }
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
-    <div className="w-1/2 h-full bg-[#111] flex items-center justify-center relative shrink-0">
+    <div 
+      className="w-1/2 h-full bg-[#111] flex items-center justify-center relative shrink-0 cursor-pointer group/image"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onClick={handleImageClick}
+    >
+      <input 
+        type="file" 
+        className="hidden" 
+        ref={fileInputRef} 
+        accept="image/*"
+        onChange={handleImageUpload} 
+      />
       {shot.image ? (
         <img src={shot.image} alt="Scene" className="w-full h-full object-cover" />
       ) : (
-        <div className="flex flex-col items-center text-[#555] gap-4">
+        <div className="flex flex-col items-center text-[#555] gap-4 hide-in-export">
           <ImageIcon size={48} />
-          <span className="text-sm font-medium uppercase tracking-widest">No Image</span>
+          <span className="text-sm font-medium uppercase tracking-widest">Drag & Drop Image</span>
         </div>
       )}
+      <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors pointer-events-none" />
     </div>
   );
 }
 
 function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, isLeftPage: boolean }) {
   const { updateShot, saveHistory } = useStore();
+  const placeholderRef = React.useRef<HTMLDivElement>(null);
+
+  const isDescriptionEmpty = !shot.description || shot.description === '<br>' || shot.description === '<div><br></div>' || shot.description.trim() === '';
+
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    if (placeholderRef.current) {
+      const html = e.currentTarget.innerHTML;
+      const isEmpty = !html || html === '<br>' || html === '<div><br></div>' || html.trim() === '';
+      placeholderRef.current.style.display = isEmpty ? 'block' : 'none';
+    }
+  };
 
   return (
     <div 
@@ -112,20 +199,22 @@ function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, i
       />
 
       <div className="flex-1 relative group/editor">
-        {(!shot.description || shot.description === '<br>' || shot.description === '<div><br></div>' || shot.description.trim() === '') && (
-          <div className="absolute inset-0 pointer-events-none text-black/20 italic opacity-50 group-hover/editor:opacity-100 transition-opacity"
-            style={{
-              fontFamily: `'${settings.bodyFont}', serif`,
-              fontSize: `${settings.bodySize}px`,
-              lineHeight: 1.6,
-            }}
-          >
-            Click to type description...
-          </div>
-        )}
+        <div 
+          ref={placeholderRef}
+          className="absolute inset-0 pointer-events-none text-black/20 italic opacity-50 group-hover/editor:opacity-100 transition-opacity"
+          style={{
+            display: isDescriptionEmpty ? 'block' : 'none',
+            fontFamily: `'${settings.bodyFont}', serif`,
+            fontSize: `${settings.bodySize}px`,
+            lineHeight: 1.6,
+          }}
+        >
+          Click to type description...
+        </div>
         <div 
           contentEditable
           suppressContentEditableWarning
+          onInput={handleInput}
           onBlur={(e) => {
             updateShot(shot.id, { description: e.currentTarget.innerHTML });
             saveHistory();

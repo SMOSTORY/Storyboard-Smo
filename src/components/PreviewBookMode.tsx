@@ -115,8 +115,6 @@ function ImagePanel({ shot }: { shot: any }) {
 }
 
 function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, isLeftPage: boolean }) {
-  const headline = shot.sceneNumber ? `Scene ${shot.sceneNumber}` : 'Untitled Scene';
-
   return (
     <div 
       className="w-1/2 h-full flex flex-col relative shrink-0 bg-[#fbfbfb]"
@@ -127,16 +125,18 @@ function TextPanel({ shot, settings, isLeftPage }: { shot: any, settings: any, i
         paddingRight: isLeftPage ? `${settings.textPaddingCenterPercent}%` : `${settings.textPaddingEdgePercent}%`,
       }}
     >
-      <h2 
-        className="leading-none text-black font-bold"
-        style={{
-          fontFamily: `'${settings.headlineFont}', serif`,
-          fontSize: `${settings.headlineSize}px`,
-          marginBottom: `${settings.headlineMargin}px`,
-        }}
-      >
-        {headline}
-      </h2>
+      {shot.sceneNumber && (
+        <h2 
+          className="leading-none text-black font-bold"
+          style={{
+            fontFamily: `'${settings.headlineFont}', serif`,
+            fontSize: `${settings.headlineSize}px`,
+            marginBottom: `${settings.headlineMargin}px`,
+          }}
+        >
+          {shot.sceneNumber}
+        </h2>
+      )}
 
       <div 
         className="flex-1 text-[#222]"
