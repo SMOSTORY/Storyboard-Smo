@@ -103,7 +103,7 @@ function ImagePanel({ shot }: { shot: any }) {
   return (
     <div className="w-1/2 h-full bg-[#111] flex items-center justify-center relative shrink-0">
       {shot.image ? (
-        <img src={shot.image} alt="Scene" className="w-full h-full object-cover" />
+        <img src={shot.image} alt="Scene" className="w-full h-full object-cover" loading="eager" decoding="sync" crossOrigin="anonymous" />
       ) : (
         <div className="flex flex-col items-center text-[#555] gap-4">
           <ImageIcon size={48} />

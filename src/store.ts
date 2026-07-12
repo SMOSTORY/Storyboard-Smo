@@ -80,7 +80,7 @@ const defaultState: StoryboardState = {
   globalTextColor: '#BBBBBB',
   globalFontSize: '11px',
   shots: Array.from({ length: 8 }).map(createEmptyShot),
-  currentView: 'storyboard',
+  currentView: 'book',
   bookSettings: {
     headlineFont: 'Uncial Antiqua',
     bodyFont: 'Caudex',

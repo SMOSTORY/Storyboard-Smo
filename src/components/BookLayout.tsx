@@ -28,7 +28,7 @@ export function BookLayout() {
             >
               
               {/* Control Toggle - Only visible on hover */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/90 backdrop-blur-sm border border-[#333] rounded-md shadow-2xl flex items-center overflow-hidden z-20">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/90 backdrop-blur-sm border border-[#333] rounded-md shadow-2xl flex items-center overflow-hidden z-20 hide-in-export">
                 <button
                   onClick={() => setBookLayout(shot.id, layout === 'image-left' ? 'text-left' : 'image-left')}
                   className="px-6 py-4 text-sm font-medium text-[#E0E0E0] hover:bg-[#333] hover:text-white transition-colors flex items-center gap-3"
@@ -40,7 +40,7 @@ export function BookLayout() {
               </div>
 
               {/* Center dividing line */}
-              <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-black/5 z-10 pointer-events-none shadow-[0_0_20px_rgba(0,0,0,0.1)]"></div>
+              <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-black/5 z-10 pointer-events-none shadow-[0_0_20px_rgba(0,0,0,0.1)] hide-in-export"></div>
 
               {layout === 'image-left' ? (
                 <>
@@ -148,7 +148,7 @@ function ImagePanel({ shot }: { shot: any }) {
         onChange={handleImageUpload} 
       />
       {shot.image ? (
-        <img src={shot.image} alt="Scene" className="w-full h-full object-cover" />
+        <img src={shot.image} alt="Scene" className="w-full h-full object-cover" loading="eager" decoding="sync" crossOrigin="anonymous" />
       ) : (
         <div className="flex flex-col items-center text-[#555] gap-4 hide-in-export">
           <ImageIcon size={48} />

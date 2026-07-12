@@ -36,8 +36,14 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
         quality: 0.95,
         pixelRatio: 2,
         backgroundColor: lightMode ? '#ffffff' : '#252525',
+        fetchRequestInit: {
+          cache: 'no-cache',
+        },
         filter: (node: any) => {
           if (node?.classList?.contains('hide-in-export')) {
+            return false;
+          }
+          if (node?.tagName === 'INPUT' && node?.type === 'file') {
             return false;
           }
           return true;
@@ -74,7 +80,17 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
       if (lightMode) el.classList.remove('light-export');
     });
     console.error('PDF Export failed:', error);
-    alert(`Export failed: ${error instanceof Error ? error.message : String(error)}`);
+    
+    let msg = String(error);
+    if (error && typeof error === 'object' && error.target) {
+      if (error.target.tagName) {
+        msg = "Element failed to load: " + error.target.tagName;
+        if (error.target.src) msg += " src=" + error.target.src;
+        if (error.target.href) msg += " href=" + error.target.href;
+      }
+    }
+    alert(`Export failed: ${error instanceof Error ? error.message : msg}`);
+  
   }
 };
 
@@ -107,8 +123,14 @@ export const exportBookPdf = async (projectName: string) => {
         quality: 0.95,
         pixelRatio: 2,
         backgroundColor: '#fdfdfd',
+        fetchRequestInit: {
+          cache: 'no-cache',
+        },
         filter: (node: any) => {
           if (node?.classList?.contains('hide-in-export')) {
+            return false;
+          }
+          if (node?.tagName === 'INPUT' && node?.type === 'file') {
             return false;
           }
           return true;
