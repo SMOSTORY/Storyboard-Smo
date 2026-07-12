@@ -27,6 +27,8 @@ export interface BookSettings {
   bodySize: number;
 }
 
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 export type ViewMode = 'storyboard' | 'book';
 
 export interface StoryboardState {
@@ -44,4 +46,5 @@ export interface StoryboardState {
   currentView: ViewMode;
   bookSettings: BookSettings;
   bookLayouts: Record<string, 'image-left' | 'text-left'>;
+  theme: ThemeMode;
 }

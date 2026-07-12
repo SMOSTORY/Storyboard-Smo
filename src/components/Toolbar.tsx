@@ -149,7 +149,7 @@ export function Toolbar() {
 
   return (
     <>
-      <header className="flex items-center justify-between px-4 py-3 border-b border-[#222] bg-[#111] z-50 shrink-0">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg-sidebar z-50 shrink-0">
         <div className="flex items-center space-x-6">
           <div className="relative" ref={fileMenuRef}>
             <button 
@@ -276,15 +276,15 @@ export function Toolbar() {
               <Menu size={20} />
             </button>
             {showOnboardingTooltip && (
-              <div className="absolute top-[calc(100%+14px)] right-0 w-[280px] bg-[#181818] border border-[#2A2A2A] rounded-lg shadow-2xl p-5 z-[60] animate-in fade-in zoom-in-95 duration-200">
-                <div className="absolute -top-[7px] right-[10px] w-3.5 h-3.5 bg-[#181818] border-t border-l border-[#2A2A2A] rotate-45"></div>
-                <h3 className="text-[#E0E0E0] font-medium mb-3 relative z-10 text-[15px]">Switch views here</h3>
-                <p className="text-[#999] text-[13px] leading-relaxed mb-5 relative z-10 font-normal">
+              <div className="absolute top-[calc(100%+14px)] right-0 w-[280px] bg-tooltip-bg rounded-lg shadow-2xl p-5 z-[60] animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute -top-[7px] right-[10px] w-3.5 h-3.5 bg-tooltip-bg rotate-45"></div>
+                <h3 className="text-tooltip-text font-bold mb-3 relative z-10 text-[15px]">Switch views here</h3>
+                <p className="text-tooltip-text/80 text-[13px] leading-relaxed mb-5 relative z-10 font-medium">
                   Switch to the Book Layout to edit text styles, or export your work to PDF.
                 </p>
                 <button
                   onClick={dismissOnboarding}
-                  className="w-full py-2.5 bg-[#2A2A2A] hover:bg-[#333] border border-[#3A3A3A] text-white text-[13px] font-medium rounded transition-colors relative z-10"
+                  className="w-full py-2.5 bg-black/10 hover:bg-black/20 text-tooltip-text font-bold text-[13px] rounded transition-colors relative z-10"
                 >
                   Ok, thanks
                 </button>
@@ -318,7 +318,7 @@ export function Toolbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-[280px] bg-[#0F1115] h-full shadow-[-10px_0_30px_rgba(0,0,0,0.5)] border-l border-[#1F2228] text-[#A1A1AA] flex flex-col pt-6"
+              className="w-[280px] bg-bg-sidebar h-full shadow-[-10px_0_30px_rgba(0,0,0,0.5)] border-l border-border text-text-secondary flex flex-col pt-6"
               onClick={(e) => e.stopPropagation()}
               style={{ fontFamily: "'Pliant', sans-serif" }}
             >
@@ -361,6 +361,29 @@ export function Toolbar() {
                     </button>
                   </div>
                   <div className="mt-auto flex flex-col py-2 border-t border-[#1F2228]">
+                    <div className="px-6 py-4 border-b border-[#1F2228]">
+                      <span className="text-[11px] font-semibold tracking-wider uppercase mb-3 block text-[#666]">Theme</span>
+                      <div className="flex bg-[#1A1D24] p-1 rounded-md">
+                        <button
+                          onClick={() => state.setTheme('light')}
+                          className={`flex-1 flex justify-center py-1.5 rounded text-[13px] font-medium transition-colors ${state.theme === 'light' ? 'bg-[#333] text-white shadow-sm' : 'text-[#888] hover:text-[#CCC]'}`}
+                        >
+                          <Sun size={14} className="mr-1.5 inline-block" /> Light
+                        </button>
+                        <button
+                          onClick={() => state.setTheme('dark')}
+                          className={`flex-1 flex justify-center py-1.5 rounded text-[13px] font-medium transition-colors ${state.theme === 'dark' ? 'bg-[#333] text-white shadow-sm' : 'text-[#888] hover:text-[#CCC]'}`}
+                        >
+                          <Moon size={14} className="mr-1.5 inline-block" /> Dark
+                        </button>
+                        <button
+                          onClick={() => state.setTheme('system')}
+                          className={`flex-1 flex justify-center py-1.5 rounded text-[13px] font-medium transition-colors ${state.theme === 'system' ? 'bg-[#333] text-white shadow-sm' : 'text-[#888] hover:text-[#CCC]'}`}
+                        >
+                          Auto
+                        </button>
+                      </div>
+                    </div>
                     <button
                       onClick={() => setIsShortcutModalOpen(true)}
                       className="flex items-center gap-3 px-6 py-4 hover:bg-[#1A1D24] hover:text-white transition-colors w-full text-left"

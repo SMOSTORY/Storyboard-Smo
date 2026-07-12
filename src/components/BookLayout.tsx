@@ -14,7 +14,7 @@ export function BookLayout() {
   }, [shots, bookLayouts]);
 
   return (
-    <div className="flex flex-col items-center py-10 px-4 flex-1 bg-[#181818] overflow-y-auto w-full">
+    <div className="flex flex-col items-center py-10 px-4 flex-1 bg-bg-main overflow-y-auto w-full">
       <div 
         className="flex flex-col items-center gap-24"
         style={{ zoom: zoomLevel / 100 } as React.CSSProperties}

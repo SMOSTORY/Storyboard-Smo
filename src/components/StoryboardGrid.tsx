@@ -70,7 +70,7 @@ export function StoryboardGrid() {
   }, [shots]);
 
   return (
-    <div className="flex flex-col items-center py-10 px-4 flex-1 bg-[#181818] overflow-y-auto w-full">
+    <div className="flex flex-col items-center py-10 px-4 flex-1 bg-bg-main overflow-y-auto w-full">
       <div 
         className="w-full flex flex-col items-center gap-12"
         style={{ zoom: `${zoomLevel}%` } as React.CSSProperties}

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, StateStorage, createJSONStorage } from 'zustand/middleware';
 import { get, set, del } from 'idb-keyval';
 import { v4 as uuidv4 } from 'uuid';
-import { Shot, StoryboardState } from './types';
+import { Shot, StoryboardState, ThemeMode } from './types';
 
 // Custom storage object for idb-keyval
 const storage: StateStorage = {
@@ -27,6 +27,7 @@ export interface StoryboardActions {
   setProjectName: (name: string) => void;
   setProjectVersion: (version: string) => void;
   setZoomLevel: (zoom: number) => void;
+  setTheme: (theme: ThemeMode) => void;
   setHeaderCenter: (text: string) => void;
   setHeaderRight: (text: string) => void;
   setFooterLeft: (text: string) => void;
@@ -93,6 +94,7 @@ const defaultState: StoryboardState = {
     bodySize: 16,
   },
   bookLayouts: {},
+  theme: 'system',
 };
 
 const extractState = (state: State): StoryboardState => ({
@@ -110,6 +112,7 @@ const extractState = (state: State): StoryboardState => ({
   currentView: state.currentView,
   bookSettings: state.bookSettings,
   bookLayouts: state.bookLayouts,
+  theme: state.theme,
 });
 
 export const useStore = create<Store>()(
@@ -130,6 +133,7 @@ export const useStore = create<Store>()(
       setProjectName: (projectName) => set({ projectName }),
       setProjectVersion: (projectVersion) => set({ projectVersion }),
       setZoomLevel: (zoomLevel) => set({ zoomLevel }),
+      setTheme: (theme) => set({ theme }),
       setHeaderCenter: (headerCenter) => set({ headerCenter }),
       setHeaderRight: (headerRight) => set({ headerRight }),
       setFooterLeft: (footerLeft) => set({ footerLeft }),
