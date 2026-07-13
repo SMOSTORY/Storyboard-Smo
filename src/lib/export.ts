@@ -2,7 +2,11 @@ import { jsPDF } from 'jspdf';
 import { toJpeg } from 'html-to-image';
 import { format } from 'date-fns';
 
-export const exportPdf = async (projectName: string, lightMode: boolean = false) => {
+export const exportPdf = async (
+  projectName: string, 
+  lightMode: boolean = false,
+  onProgress?: (current: number, total: number) => void
+) => {
   try {
     const elements = Array.from(document.querySelectorAll('.board-page')) as HTMLElement[];
     if (!elements || elements.length === 0) {
@@ -25,17 +29,22 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
     const originalScrollY = window.scrollY;
     
     for (let i = 0; i < elements.length; i++) {
+      if (onProgress) {
+        onProgress(i + 1, elements.length);
+      }
       const el = elements[i];
       
       // Scroll into view to force browser to render images that might be off-screen
       el.scrollIntoView({ behavior: 'instant', block: 'start' });
+      
       // Wait for the browser to render
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 50));
       
       const options = {
         quality: 0.95,
-        pixelRatio: 2,
+        pixelRatio: 1.5,
         backgroundColor: lightMode ? '#ffffff' : '#252525',
+        skipFonts: true,
         fetchRequestInit: {
           cache: 'no-cache',
         },
@@ -50,9 +59,11 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
         }
       };
       
-      // Some browsers (like Safari/Chrome) need a first pass to load images/fonts properly 
-      await toJpeg(el, options);
-      const imgData = await toJpeg(el, options);
+      const imgData = await toJpeg(el, options).catch(async (e) => {
+          console.warn("First toJpeg try failed, retrying...", e);
+          await new Promise(r => setTimeout(r, 100));
+          return await toJpeg(el, options);
+      });
       
       if (i > 0) {
         pdf.addPage();
@@ -94,7 +105,10 @@ export const exportPdf = async (projectName: string, lightMode: boolean = false)
   }
 };
 
-export const exportBookPdf = async (projectName: string) => {
+export const exportBookPdf = async (
+  projectName: string,
+  onProgress?: (current: number, total: number) => void
+) => {
   try {
     const elements = Array.from(document.querySelectorAll('.book-page')) as HTMLElement[];
     if (!elements || elements.length === 0) {
@@ -114,15 +128,19 @@ export const exportBookPdf = async (projectName: string) => {
     const originalScrollY = window.scrollY;
     
     for (let i = 0; i < elements.length; i++) {
+      if (onProgress) {
+        onProgress(i + 1, elements.length);
+      }
       const el = elements[i];
       
       el.scrollIntoView({ behavior: 'instant', block: 'start' });
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 50));
       
       const options = {
         quality: 0.95,
-        pixelRatio: 2,
+        pixelRatio: 1.5,
         backgroundColor: '#fdfdfd',
+        skipFonts: true,
         fetchRequestInit: {
           cache: 'no-cache',
         },
@@ -137,8 +155,11 @@ export const exportBookPdf = async (projectName: string) => {
         }
       };
       
-      await toJpeg(el, options);
-      const imgData = await toJpeg(el, options);
+      const imgData = await toJpeg(el, options).catch(async (e) => {
+          console.warn("First toJpeg try failed, retrying...", e);
+          await new Promise(r => setTimeout(r, 100));
+          return await toJpeg(el, options);
+      });
       
       if (i > 0) {
         pdf.addPage();

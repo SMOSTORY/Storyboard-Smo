@@ -28,7 +28,7 @@ export function BookLayout() {
             >
               
               {/* Control Toggle - Only visible on hover */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/90 backdrop-blur-sm border border-[#333] rounded-md shadow-2xl flex items-center overflow-hidden z-20 hide-in-export">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-[#222]/90 backdrop-blur-sm border border-[#333] border-t-0 rounded-b-md shadow-2xl flex items-center overflow-hidden z-20 hide-in-export">
                 <button
                   onClick={() => setBookLayout(shot.id, layout === 'image-left' ? 'text-left' : 'image-left')}
                   className="px-6 py-4 text-sm font-medium text-[#E0E0E0] hover:bg-[#333] hover:text-white transition-colors flex items-center gap-3"

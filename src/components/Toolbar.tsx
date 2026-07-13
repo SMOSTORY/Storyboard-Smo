@@ -12,6 +12,7 @@ export function Toolbar() {
   const state = useStore();
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportProgress, setExportProgress] = useState<{current: number, total: number} | null>(null);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPreviewBookOpen, setIsPreviewBookOpen] = useState(false);
@@ -144,7 +145,11 @@ export function Toolbar() {
 
   const handleExportPdf = async (lightMode: boolean) => {
     setIsExportModalOpen(false);
-    await exportPdf(projectName, lightMode);
+    setExportProgress({ current: 0, total: 0 });
+    await exportPdf(projectName, lightMode, (current, total) => {
+      setExportProgress({ current, total });
+    });
+    setExportProgress(null);
   };
 
   return (
@@ -206,9 +211,13 @@ export function Toolbar() {
                   <span>Export Storyboard as PDF</span>
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setIsFileMenuOpen(false);
-                    exportBookPdf(projectName);
+                    setExportProgress({ current: 0, total: 0 });
+                    await exportBookPdf(projectName, (current, total) => {
+                      setExportProgress({ current, total });
+                    });
+                    setExportProgress(null);
                   }}
                   className="w-full text-left px-4 py-3 sm:py-2 text-sm text-[#E0E0E0] hover:bg-[#222] hover:text-white flex items-center gap-3"
                 >
@@ -224,10 +233,10 @@ export function Toolbar() {
               <button
                 onClick={handlePreviewClick}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md transition-colors shadow-sm border bg-[#181818] text-[#E0E0E0] hover:bg-[#222] hover:text-white border-[#333]"
-                title="Preview Storyboard"
+                title="Preview"
               >
                 <Play size={16} />
-                <span>Preview Storyboard</span>
+                <span>Preview</span>
               </button>
             )}
             {state.currentView === 'book' && (
@@ -236,10 +245,10 @@ export function Toolbar() {
                   setIsPreviewBookOpen(true);
                 }}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-md transition-colors shadow-sm border bg-[#181818] text-[#E0E0E0] hover:bg-[#222] hover:text-white border-[#333]"
-                title="Preview Book"
+                title="Preview"
               >
                 <BookOpen size={16} />
-                <span>Preview Book</span>
+                <span>Preview</span>
               </button>
             )}
           </div>
@@ -280,7 +289,7 @@ export function Toolbar() {
                 <div className="absolute -top-[7px] right-[10px] w-3.5 h-3.5 bg-tooltip-bg rotate-45"></div>
                 <h3 className="text-tooltip-text font-bold mb-3 relative z-10 text-[15px]">Switch views here</h3>
                 <p className="text-tooltip-text/80 text-[13px] leading-relaxed mb-5 relative z-10 font-medium">
-                  Switch to the Book Layout to edit text styles, or export your work to PDF.
+                  Switch the Layouts, adjust text styles in settings, or check out the shortcuts
                 </p>
                 <button
                   onClick={dismissOnboarding}
@@ -648,7 +657,32 @@ export function Toolbar() {
         )}
       </AnimatePresence>
 
+      {exportProgress && (
+        <div className="fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#181818] border border-[#333] rounded-2xl shadow-2xl p-8 w-full max-w-sm flex flex-col items-center">
+            <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-6">
+              <FileDown size={32} className="text-blue-400 animate-bounce" />
+            </div>
+            
+            <h2 className="text-xl font-bold text-white mb-2 text-center">Exporting PDF...</h2>
+            <p className="text-sm text-[#999] mb-8 text-center px-4">
+              Please wait while your document is being generated.
+            </p>
 
+            <div className="w-full bg-[#222] rounded-full h-2.5 mb-3 border border-[#333] overflow-hidden">
+              <div 
+                className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out" 
+                style={{ width: `${exportProgress.total > 0 ? (exportProgress.current / exportProgress.total) * 100 : 0}%` }}
+              ></div>
+            </div>
+            
+            <div className="flex justify-between w-full text-xs font-medium text-[#AAA] mb-2 px-1">
+              <span>Progress</span>
+              <span>{exportProgress.current} / {exportProgress.total} pages</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isExportModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
