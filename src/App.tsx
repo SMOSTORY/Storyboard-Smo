@@ -53,12 +53,11 @@ export default function App() {
       {currentView === 'storyboard' ? <StoryboardGrid /> : <BookLayout />}
       <footer className="bg-bg-sidebar border-t border-[#222] px-4 sm:px-6 py-2 flex flex-col sm:flex-row sm:items-center justify-between shrink-0 gap-2 sm:gap-0">
         <div className="flex flex-wrap items-center gap-3 sm:space-x-4">
-          <div className="text-[10px] sm:text-[11px] text-[#E0E0E0] font-black tracking-widest uppercase flex items-center mr-2">SMOSTORY Tales</div>
           <div className="text-[9px] sm:text-[10px] text-[#969696] uppercase tracking-tighter">Total Shots: <span className="text-[#E0E0E0] font-bold">{shots.filter(s => s.image).length}</span></div>
           <div className="text-[9px] sm:text-[10px] text-[#969696] uppercase tracking-tighter">Est. Runtime: <span className="text-[#E0E0E0] font-bold">{estimatedRuntime}</span></div>
           <div className="text-[9px] sm:text-[10px] text-[#969696] uppercase tracking-tighter">Word Count: <span className="text-[#E0E0E0] font-bold">{totalWordCount}</span></div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="hidden sm:flex items-center gap-1">
            <button onClick={() => setZoomLevel(90)} className="text-[#969696] hover:text-[#E0E0E0] p-1 transition-colors" title="Overview (90%)">
              <LayoutGrid size={14} />
            </button>

@@ -45,8 +45,9 @@ export const exportPdf = async (
         pixelRatio: 1.5,
         backgroundColor: lightMode ? '#ffffff' : '#252525',
         skipFonts: true,
+        imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
         fetchRequestInit: {
-          cache: 'no-cache',
+          cache: 'no-cache' as RequestCache,
         },
         filter: (node: any) => {
           if (node?.classList?.contains('hide-in-export')) {
@@ -141,8 +142,9 @@ export const exportBookPdf = async (
         pixelRatio: 1.5,
         backgroundColor: '#fdfdfd',
         skipFonts: true,
+        imagePlaceholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
         fetchRequestInit: {
-          cache: 'no-cache',
+          cache: 'no-cache' as RequestCache,
         },
         filter: (node: any) => {
           if (node?.classList?.contains('hide-in-export')) {

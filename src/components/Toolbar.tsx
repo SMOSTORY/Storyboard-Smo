@@ -155,7 +155,7 @@ export function Toolbar() {
   return (
     <>
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg-sidebar z-50 shrink-0">
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <div className="relative" ref={fileMenuRef}>
             <button 
               onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
@@ -333,13 +333,18 @@ export function Toolbar() {
             >
               {sidebarView === 'main' && (
                 <>
+                  <div className="px-6 pb-2 pt-2">
+                    <div className="text-[12px] text-white font-black tracking-widest uppercase flex items-center">
+                      <span className="text-white">SMOSTORY</span>&nbsp;Tales
+                    </div>
+                  </div>
                   <div className="flex flex-col py-2">
                     <button
                       onClick={() => {
                         setIsMobileMenuOpen(false);
                         state.setCurrentView('storyboard');
                       }}
-                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'storyboard' ? 'text-white bg-[#1A1D24]' : ''}`}
+                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left ${state.currentView === 'storyboard' ? 'text-white bg-[#1A1D24]' : ''}`}
                     >
                       <LayoutTemplate size={20} className="stroke-[1.5]" />
                       <span>Storyboard</span>
@@ -349,21 +354,21 @@ export function Toolbar() {
                         setIsMobileMenuOpen(false);
                         state.setCurrentView('book');
                       }}
-                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left ${state.currentView === 'book' ? 'text-white bg-[#1A1D24]' : ''}`}
+                      className={`flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left ${state.currentView === 'book' ? 'text-white bg-[#1A1D24]' : ''}`}
                     >
                       <BookOpen size={20} className="stroke-[1.5]" />
                       <span>Book edit</span>
                     </button>
                     <button
                       onClick={() => setSidebarView('settings')}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left"
                     >
                       <Settings size={20} className="stroke-[1.5]" />
                       <span>Settings</span>
                     </button>
                     <button
                       onClick={() => setSidebarView('app-info')}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left"
                     >
                       <Info size={20} className="stroke-[1.5]" />
                       <span>App Info</span>
@@ -415,20 +420,20 @@ export function Toolbar() {
                   <div className="flex flex-col py-2">
                     <button
                       onClick={() => setSidebarView('storyboard-settings')}
-                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left"
                     >
                       <div className="flex items-center gap-4">
-                        <Type size={20} className="stroke-[1.5]" />
+                        <LayoutTemplate size={20} className="stroke-[1.5]" />
                         <span>Storyboard Settings</span>
                       </div>
                       <ChevronRight size={20} className="text-[#666]" />
                     </button>
                     <button
                       onClick={() => setSidebarView('book-settings')}
-                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[17px] transition-colors w-full text-left"
+                      className="flex items-center justify-between px-6 py-4 hover:bg-[#1A1D24] hover:text-white text-[15px] transition-colors w-full text-left"
                     >
                       <div className="flex items-center gap-4">
-                        <Settings2 size={20} className="stroke-[1.5]" />
+                        <BookOpen size={20} className="stroke-[1.5]" />
                         <span>Book Settings</span>
                       </div>
                       <ChevronRight size={20} className="text-[#666]" />
